@@ -1,7 +1,9 @@
 public class Weltschmerz
 {
     private volatile Noise noise;
+    public Weltschmerz(){
 
+    }
     public Weltschmerz(int seed, int terrainMP, int avgTerrain, int maxElevation, float frequency)
     {
         noise = new Noise(seed, terrainMP, avgTerrain, maxElevation, frequency);

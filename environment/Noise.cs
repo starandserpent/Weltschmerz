@@ -4,7 +4,6 @@ public class Noise
 {
     private static readonly bool USE_EARTH = false;
     private static readonly int DIFFERENCE = 500;
-
     private volatile FastNoise noise;
     private int worldWidth = 1000;
     private int worldHeight = 1000;
