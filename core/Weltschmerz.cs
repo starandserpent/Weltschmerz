@@ -4,7 +4,7 @@ public class Weltschmerz
 
     public Weltschmerz(int seed, int terrainMP, int avgTerrain, int maxElevation, float frequency)
     {
-        noise = new Noise(seed, terrainMP, avgTerrain, maxElevation, frequency, null);
+        noise = new Noise(seed, terrainMP, avgTerrain, maxElevation, frequency);
     }
 
     public double GetElevation(int posX, int posY)

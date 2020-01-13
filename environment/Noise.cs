@@ -1,4 +1,3 @@
-using Godot;
 using System;
 
 public class Noise
@@ -10,13 +9,13 @@ public class Noise
     private int worldWidth = 1000;
     private int worldHeight = 1000;
     private int samples;
-    private Image earth;
+    //private Image earth;
     private int terrainMP;
     private int avgTerrain;
     private volatile int maxElevation;
-    public Noise(int seed, int terrainMP, int avgTerrain, int maxElevation, float frequency, Image earth)
+    public Noise(int seed, int terrainMP, int avgTerrain, int maxElevation, float frequency)//, Image earth)
     {
-        this.earth = earth;
+       // this.earth = earth;
         noise = new FastNoise(seed);
         this.terrainMP = terrainMP;
         this.avgTerrain = avgTerrain;
