@@ -1,6 +1,6 @@
 using System;
 
-public class Noise
+public class Noise : IConfigurable
 {
     private static readonly bool USE_EARTH = false;
     private volatile FastNoise noise;
@@ -11,7 +11,7 @@ public class Noise
     private int avgTerrain;
     private volatile int maxElevation;
     public Noise(Config config){
-        ChangeConfig(config);
+        Configure(config);
     }
 
     public double getNoise(int x, int y)
@@ -33,7 +33,7 @@ public class Noise
         }
     }
 
-    public void ChangeConfig(Config config){//, Image earth)
+    public void Configure(Config config){//, Image earth)
        // this.earth = earth;
         noise = new FastNoise(config.seed);
         this.terrainMP = config.terrainMP;
