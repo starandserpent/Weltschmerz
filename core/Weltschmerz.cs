@@ -8,7 +8,7 @@ public class Weltschmerz
 
     public Weltschmerz(Config config)
     {
-        noise = new Noise();
+        noise = new Noise(config);
         this.config = config;
     }
 
