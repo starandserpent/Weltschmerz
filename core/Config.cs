@@ -1,4 +1,4 @@
-public struct WeltschmerzConfig{
+public struct Config{
     public int seed {get; set;}
     public int latitude {get; set;}
     public int longitude {get; set;}

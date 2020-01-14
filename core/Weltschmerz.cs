@@ -1,10 +1,9 @@
+using System;
 public class Weltschmerz
 {
     private volatile Noise noise; 
     private Config config;
-    private const string PATH = "./config/config.conf";
-
-    public Weltschmerz() : this (ConfigManager.GetConfig(PATH)){}
+    public Weltschmerz() : this (ConfigManager.GetConfig()){}
 
     public Weltschmerz(Config config)
     {
