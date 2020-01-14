@@ -1,12 +1,19 @@
 public class Weltschmerz
 {
-    private volatile Noise noise;
-    public Weltschmerz(){
+    private volatile Noise noise; 
+    private Config config;
+    private const string PATH = "./config/config.conf";
 
-    }
-    public Weltschmerz(int seed, int terrainMP, int avgTerrain, int maxElevation, float frequency)
+    public Weltschmerz() : this (ConfigManager.GetConfig(PATH)){}
+
+    public Weltschmerz(Config config)
     {
-        noise = new Noise(seed, terrainMP, avgTerrain, maxElevation, frequency);
+        noise = new Noise();
+        this.config = config;
+    }
+
+    private void SetConfig(){
+
     }
 
     public double GetElevation(int posX, int posY)
