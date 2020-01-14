@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hocon" Version="1.2.1" />
+    <PackageReference Include="Akka.Hocon" Version="0.3.0" />
   </ItemGroup>
 
 </Project>
