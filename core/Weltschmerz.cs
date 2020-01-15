@@ -1,4 +1,3 @@
-using System;
 //Class for handling all environmental variables together
 public class Weltschmerz : IConfigurable
 {
@@ -13,9 +12,9 @@ public class Weltschmerz : IConfigurable
     {
         this.config = config;
         this.noise = new Noise(config);
-        this.circulation = new Circulation(config);
-        this.precipitation = new Precipitation(config);
         this.temperature = new Temperature(config);
+        this.circulation = new Circulation(config, noise, temperature);
+        this.precipitation = new Precipitation(config);
     }
 
     public void Configure(Config config){
@@ -30,13 +29,17 @@ public class Weltschmerz : IConfigurable
         return temperature.GetTemperature(posY, elevation);
     }
 
-     public double GetTemperature(int posY, double elevation){
+    public double GetTemperature(int posY, double elevation){
         return temperature.GetTemperature(posY, elevation);
     }
 
     public double GetElevation(int posX, int posY)
     {
         return noise.getNoise(posX, posY);
+    }
+
+    public double GetPrecipitation(int posX, int posY){
+        return 0.0;
     }
 
     public int GetMaxElevation(){
