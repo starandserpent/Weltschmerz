@@ -14,7 +14,7 @@ public class Noise : IConfigurable
         Configure(config);
     }
 
-    public double getNoise(int x, int y)
+    public double GetNoise(int x, int y)
     {
         if (!USE_EARTH)
         {

@@ -152,7 +152,7 @@ public class Circulation : IConfigurable{
 
     public double CalculateDensity(int posX, int posY) {
         double density = CalculateBaseDensity(posY);
-        double elevation = noise.getNoise(posX, posY)/maxElevation;
+        double elevation = noise.GetNoise(posX, posY)/maxElevation;
         double temperature = equator.GetTemperature(posY, elevation);
         return (density * (1.0 - temperatureInfluence)) + ((1.0 - temperature) * temperatureInfluence);
     }
