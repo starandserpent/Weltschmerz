@@ -27,7 +27,7 @@ public class Weltschmerz : IConfigurable
 
     public double GetTemperature(int posX, int posY){
         double elevation = noise.GetNoise(posX, posY);
-        return equator.GetTemperature(posY, elevation);
+        return GetTemperature(posY, elevation);
     }
 
     public double GetTemperature(int posY, double elevation){
@@ -39,13 +39,36 @@ public class Weltschmerz : IConfigurable
         return noise.GetNoise(posX, posY);
     }
 
-    public double GetPrecipitation(int posX, int posY){
-        double elevation = noise.GetNoise(posX, posY);
+    public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind){
+        return precipitation.GetPrecipitation(posX, posY, elevation, temperature, wind);
+    }
+
+    public double GetPrecipitation(int posX, int posY, double elevation, double temperature){
+        Vector2 wind = circulation.GetAirFlow(posX, posY);
+        return precipitation.GetPrecipitation(posX, posY, elevation, temperature, wind);
+    }
+
+    public double GetPrecipitation(int posX, int posY, double elevation){
         double temperature = equator.GetTemperature(posX, elevation);
         Vector2 wind = circulation.GetAirFlow(posX, posY);
         return precipitation.GetPrecipitation(posX, posY, elevation, temperature, wind);
     }
 
+    public double GetPrecipitation(int posX, int posY){
+        double elevation = noise.GetNoise(posX, posY);
+        double temperature = equator.GetTemperature(posX, elevation);
+        Vector2 wind = circulation.GetAirFlow(posX, posY);
+        return GetPrecipitation(posX, posY, elevation, temperature, wind);
+    }
+
+    public Vector2 GetAirFlow(int posX, int posY){
+        double elevation = noise.GetNoise(posX, posY);
+        double temperature = equator.GetTemperature(posX, elevation);
+        return circulation.GetAirFlow(posX, posY);
+    }
+    public Config GetConfig(){
+        return config;
+    }
     public int GetMaxElevation(){
         return noise.GetMaxElevation();
     }

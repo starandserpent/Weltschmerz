@@ -158,15 +158,15 @@ public class Circulation : IConfigurable{
     }
 
     private double CalculateBaseDensity(int posY) {
-        double verticallity = Utils.ToUnsignedRange(equator.GetEquatorDistance(posY));
-        return Utils.ToUnsignedRange(Math.Cos(verticallity * 3 * (Math.PI * 2)));
+        double verticallity = WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY));
+        return WeltschmerzUtils.ToUnsignedRange(Math.Cos(verticallity * 3 * (Math.PI * 2)));
     }
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {
         float coriolisLatitude = (float) posY / latitude;
         double equatorPosition = equator.GetEquatorPosition();
         double direction = Math.Sign(coriolisLatitude - equatorPosition);
-        Vector4 matrix = Utils.GetRotation((Math.PI / 2) * direction * airFlow.Length());
+        Vector4 matrix = WeltschmerzUtils.GetRotation((Math.PI / 2) * direction * airFlow.Length());
         float x = (matrix.X * airFlow.X) + (matrix.Z * airFlow.X);
         float y = (matrix.Y * airFlow.Y) + (matrix.W * airFlow.Y);
         return new Vector2(x, y);

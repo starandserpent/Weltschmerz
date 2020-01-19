@@ -35,10 +35,10 @@ public class Precipitation : IConfigurable{
     }
 
     public double GetMoisture(int posY) {
-        double verticality = (Utils.ToUnsignedRange(equator.GetEquatorDistance(posY)) / zoom);
+        double verticality = (WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY)) / zoom);
         double mix = WeltschmerzUtils.Mix(-Math.Cos(verticality * 3 * Math.PI * 2),
                 -Math.Cos(verticality * Math.PI * 2), change);
-        return Utils.ToUnsignedRange(Math.Abs(mix) * moistureIntensity);
+        return WeltschmerzUtils.ToUnsignedRange(Math.Abs(mix) * moistureIntensity);
     }
 
     public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
@@ -100,8 +100,8 @@ public class Precipitation : IConfigurable{
     }
 
     private double GetBasePrecipitation(int posY) {
-        double verticality = Utils.ToUnsignedRange(equator.GetEquatorDistance(posY));
-        return Utils.ToUnsignedRange(-Math.Cos(verticality * 3 * Math.PI * 2));
+        double verticality = WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY));
+        return WeltschmerzUtils.ToUnsignedRange(-Math.Cos(verticality * 3 * Math.PI * 2));
     }
 
     public void Configure(Config config){
