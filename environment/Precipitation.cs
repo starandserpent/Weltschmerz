@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Numerics;
 using System;
 public class Precipitation : IConfigurable{
@@ -14,7 +15,6 @@ public class Precipitation : IConfigurable{
     private double evaporation;
     private Temperature equator;
     private Noise noise;
-    private double intensity;
     private int elevationDelta;
     public Precipitation(Config config, Noise noise, Temperature equator){
         Configure(config);
@@ -42,7 +42,9 @@ public class Precipitation : IConfigurable{
     }
 
     public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
+        double intensity = WeltschmerzUtils.IsLand(elevation) ? 1.0 * precipitationIntensity : 0;
         double humidity = GetHumidity(posX, posY, wind, elevation);
+        Godot.GD.Print(humidity);
         double estimated = (1.0 - circulationIntensity) * GetBasePrecipitation(posY);
         double elevationGradient = getElevationGradient(posX, posY).Y;
         double simulated = (2.0 * circulationIntensity) * (temperature + 10 + GetOrotographicEffect(elevation, elevationGradient, wind,
@@ -58,7 +60,7 @@ public class Precipitation : IConfigurable{
         double finalOrographicEffect = GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
         double inverseOrographicEffect = 1.0 - finalOrographicEffect;
 
-        intensity = isLand ? 1.0 * precipitationIntensity : 0;
+        double intensity = isLand ? 1.0 * precipitationIntensity : 0;
         double scale = iteration * 0.01;
 
         // circulate humidity
@@ -76,6 +78,10 @@ public class Precipitation : IConfigurable{
         double outflow = Math.Max(humidity - outflowHumidity, 0.0);
         humidity += inflow * intensity * inverseOrographicEffect;
         humidity -= outflow * intensity;
+
+        Godot.GD.Print(inflow);
+        Godot.GD.Print(outflow);
+        Godot.GD.Print(intensity);
 
         return humidity;
     }

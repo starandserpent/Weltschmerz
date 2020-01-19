@@ -2,8 +2,8 @@ using System.Numerics;
 using System;
 public class WeltschmerzUtils{
     public static Vector4 GetRotation(double angle){
-        float sine = (float)Math.Asin(angle);
-        float cosine = (float)Math.Acos(angle);
+        float sine = (float)Math.Sin(angle);
+        float cosine = (float)Math.Cos(angle);
         return new Vector4(cosine, -sine, sine, cosine);
     }
 

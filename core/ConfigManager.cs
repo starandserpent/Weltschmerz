@@ -47,7 +47,7 @@ public class ConfigManager{
 
     //Humidity
     config.transpiration  = hocon.GetFloat("humidity.transpiration");
-    config.evaporation  = hocon.GetInt("humidity.evaporation");
+    config.evaporation  = hocon.GetFloat("humidity.evaporation");
     
     //Circulation
     config.exchangeCoefficient  = hocon.GetFloat("circulation.exchange_coefficient");

@@ -30,7 +30,7 @@ public struct Config{
 
     //Humidity
     public float transpiration {get; set;}
-    public int evaporation {get; set;}
+    public float evaporation {get; set;}
     
     //Circulation
     public float exchangeCoefficient {get; set;}
