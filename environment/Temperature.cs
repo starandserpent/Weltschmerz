@@ -15,6 +15,10 @@ public class Temperature : IConfigurable{
     }
 
     public double GetEquatorDistance(int posY){
+        if(posY < equatorPosition){
+            return Math.Abs(posY - equatorPosition);
+        }
+
         return Math.Abs(equatorPosition - posY);
     }
 

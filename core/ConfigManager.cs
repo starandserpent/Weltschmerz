@@ -22,6 +22,7 @@ public class ConfigManager{
         config.latitude = hocon.GetInt("map.latitude");
         config.longitude = hocon.GetInt("map.longitude");
         config.maxElevation = hocon.GetInt("map.max_elevation");
+        config.minElevation = hocon.GetInt("map.min_elevation");
 
         //Noise
         config.avgTerrain = hocon.GetInt("noise.average_terrain_hight");
@@ -39,8 +40,8 @@ public class ConfigManager{
    config.change  = hocon.GetFloat("moisture.change");
 
     //Precipitation
-    config.orographicEffect  = hocon.GetFloat("precipitation.circulation_intensity");
-    config.circulationIntensity  = hocon.GetFloat("precipitation.orographic_effect");
+    config.orographicEffect  = hocon.GetFloat("precipitation.orographic_effect");
+    config.circulationIntensity  = hocon.GetFloat("precipitation.circulation_intensity");
     config.precipitationIntensity  = hocon.GetFloat("precipitation.precipitation_intensity");
     config.iteration  = hocon.GetFloat("precipitation.iteration");
     config.elevationDelta  = hocon.GetInt("precipitation.elevation_delta");

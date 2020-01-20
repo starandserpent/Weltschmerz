@@ -22,9 +22,9 @@ public class Precipitation : IConfigurable{
         this.equator = equator;
     }
 
-    private Vector3 getElevationGradient(int posX, int posY) {
-        float x = Math.Min(Math.Min(posX + elevationDelta, longitude - 1), 0);
-        float y = Math.Min(Math.Min(posY + elevationDelta, latitude - 1), 0);
+    private Vector3 GetElevationGradient(int posX, int posY) {
+        float x = Math.Max(Math.Min(posX + elevationDelta, longitude - 1), 0);
+        float y = Math.Max(Math.Min(posY + elevationDelta, latitude - 1), 0);
 
         x = (float) (noise.GetNoise(Math.Min((int) x + elevationDelta, longitude - 1), posY)
                 - noise.GetNoise(Math.Max((int) x - elevationDelta, 0), posY));
@@ -44,44 +44,39 @@ public class Precipitation : IConfigurable{
     public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
         double intensity = WeltschmerzUtils.IsLand(elevation) ? 1.0 * precipitationIntensity : 0;
         double humidity = GetHumidity(posX, posY, wind, elevation);
-        Godot.GD.Print(humidity);
-        double estimated = (1.0 - circulationIntensity) * GetBasePrecipitation(posY);
-        double elevationGradient = getElevationGradient(posX, posY).Y;
-        double simulated = (2.0 * circulationIntensity) * (temperature + 10 + GetOrotographicEffect(elevation, elevationGradient, wind,
-                orographicEffect)) * humidity;
+        double estimated = (1.0 - circulationIntensity) * GetBasePrecipitation(posY) * humidity;
+        double elevationGradient = GetElevationGradient(posX, posY).Y;
+        double temp = temperature + GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
+        double simulated = temp * humidity;
         return Math.Max(intensity * (estimated + simulated), 0);
     }
 
     private double GetHumidity(int posX, int posY, Vector2 wind, double elevation) {
         bool isLand = WeltschmerzUtils.IsLand(elevation);
         double humidity = GetEvapotranspiration(posY, isLand);
-        double elevationGradient = getElevationGradient(posX, posY).Y;
+        double elevationGradient = GetElevationGradient(posX, posY).Y;
 
         double finalOrographicEffect = GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
         double inverseOrographicEffect = 1.0 - finalOrographicEffect;
 
         double intensity = isLand ? 1.0 * precipitationIntensity : 0;
-        double scale = iteration * 0.01;
+        double scale = iteration;
 
         // circulate humidity
-        int x = Math.Max(Math.Min((int) (posX - (Vector2.Normalize(wind).X * wind.Length() * scale)), longitude - 1), 0);
-        int y = Math.Max(Math.Min((int) (posY - (Vector2.Normalize(wind).Y * wind.Length() * scale)), latitude - 1), 0);
+        double x = Math.Max(Math.Min(posX - (Vector2.Normalize(wind).X * wind.Length() * scale), longitude - 1), 0.0);
+        double y = Math.Max(Math.Min(posY - (Vector2.Normalize(wind).Y * wind.Length() * scale), latitude - 1), 0.0);
 
-        double inflowHumidity = GetEvapotranspiration(y, WeltschmerzUtils.IsLand(noise.GetNoise(x, y)));
+        double inflowHumidity = GetEvapotranspiration((int)y, WeltschmerzUtils.IsLand(noise.GetNoise((int)x,(int) y)));
 
-        x = Math.Max(Math.Min((int) (posX + (Vector2.Normalize(wind).X * wind.Length() * scale)), longitude - 1), 0);
-        y = Math.Max(Math.Min((int) (posY + (Vector2.Normalize(wind).Y * wind.Length() * scale)), latitude - 1), 0);
+        x = Math.Max(Math.Min(posX + (Vector2.Normalize(wind).X * wind.Length() * scale), (double)longitude - 1), 0.0);
+        y = Math.Max(Math.Min(posY + (Vector2.Normalize(wind).Y * wind.Length() * scale), (double)latitude - 1), 0.0);
 
-        double outflowHumidity = GetEvapotranspiration(y, WeltschmerzUtils.IsLand(noise.GetNoise(x, y)));
+        double outflowHumidity = GetEvapotranspiration((int)y, WeltschmerzUtils.IsLand(noise.GetNoise((int)x,(int) y)));
 
-        double inflow = Math.Max(inflowHumidity - humidity, 0.0);
-        double outflow = Math.Max(humidity - outflowHumidity, 0.0);
+        double inflow = Math.Min(inflowHumidity - humidity, 0.0);
+        double outflow = Math.Min(humidity - outflowHumidity, 0.0);
         humidity += inflow * intensity * inverseOrographicEffect;
         humidity -= outflow * intensity;
-
-        Godot.GD.Print(inflow);
-        Godot.GD.Print(outflow);
-        Godot.GD.Print(intensity);
 
         return humidity;
     }
@@ -107,7 +102,7 @@ public class Precipitation : IConfigurable{
 
     private double GetBasePrecipitation(int posY) {
         double verticality = WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY));
-        return WeltschmerzUtils.ToUnsignedRange(-Math.Cos(verticality * 3 * Math.PI * 2));
+        return WeltschmerzUtils.ToUnsignedRange(Math.Cos(verticality * 3 * Math.PI * 2));
     }
 
     public void Configure(Config config){
@@ -122,5 +117,6 @@ public class Precipitation : IConfigurable{
         this.iteration = config.iteration;
         this.transpiration = config.transpiration;
         this.evaporation = config.evaporation;
+        this.elevationDelta = config.elevationDelta;
     }
 }

@@ -8,7 +8,7 @@ public class WeltschmerzUtils{
     }
 
     public static double ToUnsignedRange(double value) {
-        return (value * 0.5F) + 0.5F;
+        return (value * 0.5) + 0.5;
     }
 
     public static bool IsLand(double elevation) {

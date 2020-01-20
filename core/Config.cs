@@ -5,6 +5,7 @@ public struct Config{
     public int latitude {get; set;}
     public int longitude {get; set;}
     public int maxElevation {get; set;}
+    public int minElevation {get; set;}
 
     //Noise
     public int terrainMP {get; set;}

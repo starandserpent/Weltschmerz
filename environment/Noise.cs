@@ -10,6 +10,7 @@ public class Noise : IConfigurable
     private int terrainMP;
     private int avgTerrain;
     private volatile int maxElevation;
+    private int minElevation;
     public Noise(Config config){
         Configure(config);
     }
@@ -24,7 +25,7 @@ public class Noise : IConfigurable
             double ny = Math.Cos(t * 2 * Math.PI) * 1.0 / (2 * Math.PI);
             double nz = Math.Sin(s * 2 * Math.PI) * 1.0 / (2 * Math.PI);
             double nw = Math.Sin(t * 2 * Math.PI) * 1.0 / (2 * Math.PI);
-            return Math.Min(Math.Max((noise.GetSimplex((float) nx, (float) ny, (float) nz, (float) nw) * terrainMP) + avgTerrain, 1), maxElevation);
+            return Math.Min(Math.Max((noise.GetSimplex((float) nx, (float) ny, (float) nz, (float) nw) * terrainMP), minElevation), maxElevation);
         }
         else
         {
@@ -43,6 +44,7 @@ public class Noise : IConfigurable
         this.maxElevation = config.maxElevation;
         this.latitude = config.latitude;
         this.longitude = config.longitude;
+        this.minElevation = config.minElevation;
     }
 
     public int GetMaxElevation(){
