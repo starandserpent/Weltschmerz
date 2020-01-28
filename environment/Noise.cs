@@ -39,7 +39,7 @@ public class Noise : IConfigurable
         noise = new FastNoise(config.seed);
         this.terrainMP = config.terrainMP;
         this.avgTerrain = config.avgTerrain;
-        noise.SetNoiseType(FastNoise.NoiseType.Simplex);
+        noise.SetNoiseType(FastNoise.NoiseType.Perlin);
         noise.SetFrequency(config.frequency);
         this.maxElevation = config.maxElevation;
         this.latitude = config.latitude;

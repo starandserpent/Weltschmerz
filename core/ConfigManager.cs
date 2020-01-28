@@ -45,6 +45,7 @@ public class ConfigManager{
     config.precipitationIntensity  = hocon.GetFloat("precipitation.precipitation_intensity");
     config.iteration  = hocon.GetFloat("precipitation.iteration");
     config.elevationDelta  = hocon.GetInt("precipitation.elevation_delta");
+    config.maxPrecipitation  = hocon.GetInt("precipitation.max_precipitation");
 
     //Humidity
     config.transpiration  = hocon.GetFloat("humidity.transpiration");

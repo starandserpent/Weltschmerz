@@ -28,6 +28,8 @@ public struct Config{
     public float precipitationIntensity {get; set;}
     public float iteration {get; set;}
     public int elevationDelta {get; set;}
+    public int maxPrecipitation {get; set;}
+    public int minPrecipitation {get; set;}
 
     //Humidity
     public float transpiration {get; set;}

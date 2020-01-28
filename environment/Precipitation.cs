@@ -13,9 +13,12 @@ public class Precipitation : IConfigurable{
     private double iteration;
     private double transpiration;
     private double evaporation;
+    private int minTemperature;
     private Temperature equator;
     private Noise noise;
     private int elevationDelta;
+
+    private int maxPrecipitation;
     public Precipitation(Config config, Noise noise, Temperature equator){
         Configure(config);
         this.noise = noise;
@@ -34,21 +37,15 @@ public class Precipitation : IConfigurable{
         return Vector3.Normalize(new Vector3(x, 0.01F * elevationDelta, y));
     }
 
-    public double GetMoisture(int posY) {
-        double verticality = (WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY)) / zoom);
-        double mix = WeltschmerzUtils.Mix(-Math.Cos(verticality * 3 * Math.PI * 2),
-                -Math.Cos(verticality * Math.PI * 2), change);
-        return WeltschmerzUtils.ToUnsignedRange(Math.Abs(mix) * moistureIntensity);
-    }
-
     public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
-        double intensity = WeltschmerzUtils.IsLand(elevation) ? 1.0 * precipitationIntensity : 0;
+        double intensity = WeltschmerzUtils.IsLand(elevation) ? precipitationIntensity : 0;
         double humidity = GetHumidity(posX, posY, wind, elevation);
-        double estimated = (1.0 - circulationIntensity) * GetBasePrecipitation(posY) * humidity;
+        double estimated = (1.0 - circulationIntensity) * GetEstimatedMoisture(posY) * humidity;
         double elevationGradient = GetElevationGradient(posX, posY).Y;
-        double temp = temperature + GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
-        double simulated = temp * humidity;
-        return Math.Max(intensity * (estimated + simulated), 0);
+        double temp = (temperature + Math.Abs(minTemperature)) + GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
+        double simulated = (2.0 * circulationIntensity) * temp * humidity;
+        double precipitation = intensity * (estimated + simulated);
+        return Math.Max(precipitation, 0);
     }
 
     private double GetHumidity(int posX, int posY, Vector2 wind, double elevation) {
@@ -73,12 +70,12 @@ public class Precipitation : IConfigurable{
 
         double outflowHumidity = GetEvapotranspiration((int)y, WeltschmerzUtils.IsLand(noise.GetNoise((int)x,(int) y)));
 
-        double inflow = Math.Min(inflowHumidity - humidity, 0.0);
-        double outflow = Math.Min(humidity - outflowHumidity, 0.0);
+        double inflow = inflowHumidity - humidity;
+        double outflow = humidity - outflowHumidity;
         humidity += inflow * intensity * inverseOrographicEffect;
         humidity -= outflow * intensity;
 
-        return humidity;
+        return Math.Max(humidity, 0.1);
     }
 
     private double GetEvapotranspiration(int posY, bool isLand) {
@@ -89,20 +86,21 @@ public class Precipitation : IConfigurable{
             evapotranspiration = evaporation;
         }
 
-        evapotranspiration *= GetMoisture(posY);
+        evapotranspiration *= GetEstimatedMoisture(posY);
         return evapotranspiration;
     }
 
     private static double GetOrotographicEffect(double elevation, double elevationGradient, Vector2 wind, double ortographicEffect) {
         wind = Vector2.Normalize(wind);
         double slope = WeltschmerzUtils.IsLand(elevation) ? 1.0 - elevationGradient : 0.0;
-        double uphill = Math.Max(Math.Max(wind.X * -elevation, wind.Y * -elevation), 0.0);
+        double uphill = Math.Max(Math.Min(wind.X * -elevation, wind.Y * -elevation), 0.0);
         return uphill * slope * ortographicEffect;
     }
 
-    private double GetBasePrecipitation(int posY) {
-        double verticality = WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY));
-        return WeltschmerzUtils.ToUnsignedRange(Math.Cos(verticality * 3 * Math.PI * 2));
+    private double GetEstimatedMoisture(int posY) {
+        double y = posY/equator.GetEquatorPosition();
+        double moisture =  1 - (Math.Cos(y * Math.PI) + Math.Cos(3*y*Math.PI))/2;
+        return moisture * maxPrecipitation/2;
     }
 
     public void Configure(Config config){
@@ -118,5 +116,7 @@ public class Precipitation : IConfigurable{
         this.transpiration = config.transpiration;
         this.evaporation = config.evaporation;
         this.elevationDelta = config.elevationDelta;
+        this.minTemperature = config.minTemperature;
+        this.maxPrecipitation = config.maxPrecipitation;
     }
 }
