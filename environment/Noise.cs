@@ -1,6 +1,6 @@
 using System;
 
-public class Noise : IConfigurable
+public class Noise : NoiseGenerator
 {
     private static readonly bool USE_EARTH = false;
     private volatile FastNoise noise;
@@ -16,10 +16,8 @@ public class Noise : IConfigurable
         Configure(config);
     }
 
-    public double GetNoise(int x, int y)
+    public override double GetNoise(int x, int y)
     {
-        if (!USE_EARTH)
-        {
             float s = x / (float) longitude;
             float t = y / (float) latitude;
             double nx = Math.Cos(s * 2 * Math.PI) * 1.0 / (2 * Math.PI);
@@ -31,16 +29,9 @@ public class Noise : IConfigurable
             float n2 = noise.GetPerlinFractal((float) nz, (float) nw);
 
             return Math.Min(Math.Max(noise.GetPerlinFractal(n1, n2) * terrainMP, minElevation), maxElevation);
-        }
-        else
-        {
-            //return new Color(earth(x, y)).getRed();
-            return 0.0;
-        }
     }
 
-    public void Configure(Config config){//, Image earth)
-       // this.earth = earth;
+    public override void Configure(Config config){
         noise = new FastNoise(config.seed);
         this.terrainMP = config.terrainMP;
         this.avgTerrain = config.avgTerrain;

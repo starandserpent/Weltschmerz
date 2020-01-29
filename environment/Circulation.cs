@@ -1,8 +1,8 @@
 using System.Numerics;
 using System;
-public class Circulation : IConfigurable{
-    private Noise noise;
-    private Temperature equator;
+public class Circulation : CirculationGenerator{
+    private NoiseGenerator noise;
+    private TemperatureGenerator equator;
     private int latitude;
     private int longitude;
     private double maxElevation;
@@ -10,13 +10,13 @@ public class Circulation : IConfigurable{
     private double temperatureInfluence;
     private float exchangeCoefficient;
     private int octaves;
-    public Circulation(Config config, Noise noise, Temperature temperature){
+    public Circulation(Config config, NoiseGenerator noise, TemperatureGenerator temperature){
         Configure(config);
         this.noise = noise;
         this.equator = temperature;
     }
 
-    public void Configure(Config config){
+    public override void Configure(Config config){
         this.latitude = config.latitude;
         this.longitude = config.longitude;
         this.maxElevation = config.maxElevation;
@@ -26,7 +26,7 @@ public class Circulation : IConfigurable{
         this.octaves = config.circulationOctaves;
     }
 
-   public Vector2 GetAirFlow(int posX, int posY) {
+   public override Vector2 GetAirFlow(int posX, int posY) {
         Vector4 airExchange = CalculateAirExchange(posX, posY) * exchangeCoefficient;
 
         airExchange = Vector4.Clamp(airExchange, new Vector4(-1F, -1F, -1F, -1F), new Vector4(1F, 1F, 1F, 1F));
@@ -164,7 +164,7 @@ public class Circulation : IConfigurable{
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {
         float coriolisLatitude = (float) posY / latitude;
-        double equatorPosition = equator.GetEquatorPosition();
+        double equatorPosition = equator.EquatorPosition;
         double direction = Math.Sign(coriolisLatitude - equatorPosition);
         Vector4 matrix = WeltschmerzUtils.GetRotation((Math.PI / 2) * direction * airFlow.Length());
         float x = (matrix.X * airFlow.X) + (matrix.Z * airFlow.X);

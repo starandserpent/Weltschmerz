@@ -1,10 +1,9 @@
 using System;
 
-public class Temperature : IConfigurable{
+public class Temperature : TemperatureGenerator{
     private int maxTemperature;
     private int minTemperature;
     private double temperatureDecrease;
-    private double equatorPosition;
     private double tempDifference;
 
     //Constructor initializing class with Hocon values
@@ -13,35 +12,31 @@ public class Temperature : IConfigurable{
     }
 
     //Copy values from Hocon configuration into class
-    public void Configure(Config config){
+    public override void Configure(Config config){
         this.maxTemperature = config.maxTemperature;
         this.minTemperature = config.minTemperature;
         this.temperatureDecrease = config.temperatureDecrease;
 
         //Equator position is at half world size (latitude)
-        this.equatorPosition = (config.latitude / 2.0);
+        this.EquatorPosition = (config.latitude / 2.0);
 
         //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
-        tempDifference = (Math.Abs(minTemperature) + Math.Abs(maxTemperature)) / equatorPosition;
+        tempDifference = (Math.Abs(minTemperature) + Math.Abs(maxTemperature)) / EquatorPosition;
     }
 
     /* Get distance to equator from current position
     * Calculation differens if player is on north or south pole
     */
-    public double GetEquatorDistance(int posY){
+    public override double GetEquatorDistance(int posY){
 
-        if(posY < equatorPosition){
-            return Math.Abs(posY - equatorPosition);
+        if(posY < EquatorPosition){
+            return Math.Abs(posY - EquatorPosition);
         }
 
-        return Math.Abs(equatorPosition - posY);
+        return Math.Abs(EquatorPosition - posY);
     }
 
-    public double GetEquatorPosition(){
-        return equatorPosition;
-    }
-
-    public double GetTemperature(int posY, double elevation) {
+    public override double GetTemperature(int posY, double elevation) {
 
         //The larger distance from equator the lower temperature, if position is on equator it is max temperature
         double basicTemperature = (GetEquatorDistance(posY) * -tempDifference) + maxTemperature;

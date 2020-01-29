@@ -1,7 +1,6 @@
-using System.Runtime.InteropServices;
 using System.Numerics;
 using System;
-public class Precipitation : IConfigurable{
+public class Precipitation : PrecipitationGenerator{
     private int longitude;
     private int latitude;
     private double zoom;
@@ -14,12 +13,12 @@ public class Precipitation : IConfigurable{
     private double transpiration;
     private double evaporation;
     private int minTemperature;
-    private Temperature equator;
-    private Noise noise;
+    private TemperatureGenerator equator;
+    private NoiseGenerator noise;
     private int elevationDelta;
 
     private int maxPrecipitation;
-    public Precipitation(Config config, Noise noise, Temperature equator){
+    public Precipitation(Config config, NoiseGenerator noise, TemperatureGenerator equator){
         Configure(config);
         this.noise = noise;
         this.equator = equator;
@@ -37,7 +36,7 @@ public class Precipitation : IConfigurable{
         return Vector3.Normalize(new Vector3(x, 0.01F * elevationDelta, y));
     }
 
-    public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
+    public override double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
         double intensity = WeltschmerzUtils.IsLand(elevation) ? precipitationIntensity : 0;
         double humidity = GetHumidity(posX, posY, wind, elevation);
         double estimated = (1.0 - circulationIntensity) * GetEstimatedMoisture(posY) * humidity;
@@ -98,12 +97,12 @@ public class Precipitation : IConfigurable{
     }
 
     private double GetEstimatedMoisture(int posY) {
-        double y = posY/equator.GetEquatorPosition();
+        double y = posY/equator.EquatorPosition;
         double moisture =  1 - (Math.Cos(y * Math.PI) + Math.Cos(3*y*Math.PI))/2;
         return moisture * maxPrecipitation/2;
     }
 
-    public void Configure(Config config){
+    public override void Configure(Config config){
         this.latitude = config.latitude;
         this.longitude = config.longitude;
         this.zoom = config.zoom;   
