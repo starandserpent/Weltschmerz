@@ -9,6 +9,7 @@ public class Noise : IConfigurable
     private int samples;
     private int terrainMP;
     private int avgTerrain;
+    private float frequency;
     private volatile int maxElevation;
     private int minElevation;
     public Noise(Config config){
@@ -25,7 +26,11 @@ public class Noise : IConfigurable
             double ny = Math.Cos(t * 2 * Math.PI) * 1.0 / (2 * Math.PI);
             double nz = Math.Sin(s * 2 * Math.PI) * 1.0 / (2 * Math.PI);
             double nw = Math.Sin(t * 2 * Math.PI) * 1.0 / (2 * Math.PI);
-            return Math.Min(Math.Max((noise.GetSimplex((float) nx, (float) ny, (float) nz, (float) nw) * terrainMP), minElevation), maxElevation);
+
+            float n1 = noise.GetPerlinFractal( (float) nx, (float) ny);
+            float n2 = noise.GetPerlinFractal((float) nz, (float) nw);
+
+            return Math.Min(Math.Max(noise.GetPerlinFractal(n1, n2) * terrainMP, minElevation), maxElevation);
         }
         else
         {
@@ -39,8 +44,10 @@ public class Noise : IConfigurable
         noise = new FastNoise(config.seed);
         this.terrainMP = config.terrainMP;
         this.avgTerrain = config.avgTerrain;
+        this.frequency = config.frequency;
         noise.SetNoiseType(FastNoise.NoiseType.Perlin);
-        noise.SetFrequency(config.frequency);
+        noise.SetFrequency(frequency);
+        noise.SetFractalOctaves(10);
         this.maxElevation = config.maxElevation;
         this.latitude = config.latitude;
         this.longitude = config.longitude;
