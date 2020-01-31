@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 public class Noise : NoiseGenerator
 {
@@ -25,10 +26,10 @@ public class Noise : NoiseGenerator
             double nz = Math.Sin(s * 2 * Math.PI) * 1.0 / (2 * Math.PI);
             double nw = Math.Sin(t * 2 * Math.PI) * 1.0 / (2 * Math.PI);
 
-            float n1 = noise.GetPerlinFractal( (float) nx, (float) ny);
-            float n2 = noise.GetPerlinFractal((float) nz, (float) nw);
+            double n1 = noise.GetSimplexFractal((float) nx,(float) ny);
+            double n2 = noise.GetSimplexFractal((float) nz,(float) nw);
 
-            return Math.Min(Math.Max(noise.GetPerlinFractal(n1, n2) * terrainMP, minElevation), maxElevation);
+            return Math.Min(Math.Max(noise.GetSimplexFractal((float)n1, (float)n2) * terrainMP, minElevation), maxElevation);
     }
 
     public override void Configure(Config config){
@@ -38,14 +39,10 @@ public class Noise : NoiseGenerator
         this.frequency = config.frequency;
         noise.SetNoiseType(FastNoise.NoiseType.Perlin);
         noise.SetFrequency(frequency);
-        noise.SetFractalOctaves(10);
+        noise.SetFractalOctaves(100);
         this.maxElevation = config.maxElevation;
         this.latitude = config.latitude;
         this.longitude = config.longitude;
         this.minElevation = config.minElevation;
-    }
-
-    public int GetMaxElevation(){
-        return maxElevation;
     }
 }

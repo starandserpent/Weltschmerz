@@ -1,8 +1,7 @@
 using System.Numerics;
 using System;
 public class Circulation : CirculationGenerator{
-    private NoiseGenerator noise;
-    private TemperatureGenerator equator;
+    private Weltschmerz weltschmerz;
     private int latitude;
     private int longitude;
     private double maxElevation;
@@ -10,10 +9,9 @@ public class Circulation : CirculationGenerator{
     private double temperatureInfluence;
     private float exchangeCoefficient;
     private int octaves;
-    public Circulation(Config config, NoiseGenerator noise, TemperatureGenerator temperature){
+    public Circulation(Config config, Weltschmerz weltschmerz){
         Configure(config);
-        this.noise = noise;
-        this.equator = temperature;
+        this.weltschmerz = weltschmerz;
     }
 
     public override void Configure(Config config){
@@ -152,19 +150,19 @@ public class Circulation : CirculationGenerator{
 
     public double CalculateDensity(int posX, int posY) {
         double density = CalculateBaseDensity(posY);
-        double elevation = noise.GetNoise(posX, posY)/maxElevation;
-        double temperature = equator.GetTemperature(posY, elevation);
+        double elevation = weltschmerz.NoiseGenerator.GetNoise(posX, posY)/maxElevation;
+        double temperature = weltschmerz.TemperatureGenerator.GetTemperature(posY, elevation);
         return (density * (1.0 - temperatureInfluence)) + ((1.0 - temperature) * temperatureInfluence);
     }
 
     private double CalculateBaseDensity(int posY) {
-        double verticallity = WeltschmerzUtils.ToUnsignedRange(equator.GetEquatorDistance(posY));
+        double verticallity = WeltschmerzUtils.ToUnsignedRange(weltschmerz.TemperatureGenerator.GetEquatorDistance(posY));
         return WeltschmerzUtils.ToUnsignedRange(Math.Cos(verticallity * 3 * (Math.PI * 2)));
     }
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {
         float coriolisLatitude = (float) posY / latitude;
-        double equatorPosition = equator.EquatorPosition;
+        double equatorPosition = weltschmerz.TemperatureGenerator.EquatorPosition;
         double direction = Math.Sign(coriolisLatitude - equatorPosition);
         Vector4 matrix = WeltschmerzUtils.GetRotation((Math.PI / 2) * direction * airFlow.Length());
         float x = (matrix.X * airFlow.X) + (matrix.Z * airFlow.X);

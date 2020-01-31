@@ -2,10 +2,10 @@ using System.Numerics;
 //Class for handling all environmental variables together
 public class Weltschmerz : IConfigurable
 {
-    NoiseGenerator NoiseGenerator{get; set;}
-    CirculationGenerator CirculationGenerator{get; set;}
-    PrecipitationGenerator PrecipitationGenerator{get; set;}
-    TemperatureGenerator TemperatureGenerator{get; set;}
+    public NoiseGenerator NoiseGenerator{get; set;}
+    public CirculationGenerator CirculationGenerator{get; set;}
+    public PrecipitationGenerator PrecipitationGenerator{get; set;}
+    public TemperatureGenerator TemperatureGenerator{get; set;}
     private Config config;
     public Weltschmerz() : this (ConfigManager.GetConfig()){}
 
@@ -14,8 +14,8 @@ public class Weltschmerz : IConfigurable
         this.config = config;
         this.NoiseGenerator = new Noise(config);
         this.TemperatureGenerator = new Temperature(config);
-        this.CirculationGenerator = new Circulation(config, NoiseGenerator, TemperatureGenerator);
-        this.PrecipitationGenerator = new Precipitation(config, NoiseGenerator, TemperatureGenerator);
+        this.CirculationGenerator = new Circulation(config, this);
+        this.PrecipitationGenerator = new Precipitation(config, this);
     }
 
     public void Update(){
