@@ -3,9 +3,6 @@ using System;
 public class Precipitation : PrecipitationGenerator{
     private int longitude;
     private int latitude;
-    private double zoom;
-    private double change;
-    private double moistureIntensity;
     private double circulationIntensity;
     private double orographicEffect;
     private double precipitationIntensity;
@@ -37,7 +34,7 @@ public class Precipitation : PrecipitationGenerator{
     public override double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind) {
         double intensity = WeltschmerzUtils.IsLand(elevation) ? precipitationIntensity : 0;
         double humidity = GetHumidity(posX, posY, wind, elevation);
-        double estimated = (1.0 - circulationIntensity) * GetEstimatedMoisture(posY) * humidity;
+        double estimated = (1.0 - circulationIntensity) * GetMoisture(posY) * humidity;
         double elevationGradient = GetElevationGradient(posX, posY).Y;
         double temp = (temperature + Math.Abs(minTemperature)) + GetOrotographicEffect(elevation, elevationGradient, wind, orographicEffect);
         double simulated = (2.0 * circulationIntensity) * temp * humidity;
@@ -83,7 +80,7 @@ public class Precipitation : PrecipitationGenerator{
             evapotranspiration = evaporation;
         }
 
-        evapotranspiration *= GetEstimatedMoisture(posY);
+        evapotranspiration *= GetMoisture(posY);
         return evapotranspiration;
     }
 
@@ -94,7 +91,7 @@ public class Precipitation : PrecipitationGenerator{
         return uphill * slope * ortographicEffect;
     }
 
-    private double GetEstimatedMoisture(int posY) {
+    public override double GetMoisture(int posY) {
         double y = posY/weltschmerz.TemperatureGenerator.EquatorPosition;
         double moisture =  1 - (Math.Cos(y * Math.PI) + Math.Cos(3*y*Math.PI))/2;
         return moisture * maxPrecipitation/2;
@@ -103,9 +100,6 @@ public class Precipitation : PrecipitationGenerator{
     public override void Configure(Config config){
         this.latitude = config.latitude;
         this.longitude = config.longitude;
-        this.zoom = config.zoom;   
-        this.change = config.change;
-        this.moistureIntensity = config.moistureIntensity;
         this.circulationIntensity = config.circulationIntensity;
         this.orographicEffect = config.orographicEffect;
         this.precipitationIntensity = config.precipitationIntensity;

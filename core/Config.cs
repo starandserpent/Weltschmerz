@@ -17,11 +17,6 @@ public struct Config{
     public int minTemperature {get; set;}
     public float temperatureDecrease {get; set;}
 
-    //Moisture
-    public float zoom {get; set;}
-    public float moistureIntensity {get; set;}
-    public float change {get; set;}
-
     //Precipitation
     public float orographicEffect {get; set;}
     public float circulationIntensity {get; set;}

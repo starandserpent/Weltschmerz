@@ -34,10 +34,6 @@ public class ConfigManager{
      config.minTemperature  = hocon.GetInt("temperature.min_temperature");
     config.temperatureDecrease  = hocon.GetFloat("temperature.temperature_decrease");
 
-    //Moisture
-    config.zoom  = hocon.GetFloat("moisture.zoom");
-    config.moistureIntensity  = hocon.GetFloat("moisture.moisture_intensity");
-   config.change  = hocon.GetFloat("moisture.change");
 
     //Precipitation
     config.orographicEffect  = hocon.GetFloat("precipitation.orographic_effect");

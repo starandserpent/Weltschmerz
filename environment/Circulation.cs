@@ -19,7 +19,7 @@ public class Circulation : CirculationGenerator{
         this.longitude = config.longitude;
         this.maxElevation = config.maxElevation;
         this.circulationDecline = config.circulationDecline;
-        this.temperatureInfluence = config.circulationIntensity;
+        this.temperatureInfluence = config.temperatureInfluence;
         this.exchangeCoefficient = config.exchangeCoefficient;
         this.octaves = config.circulationOctaves;
     }

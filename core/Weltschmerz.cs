@@ -70,6 +70,11 @@ public class Weltschmerz : IConfigurable
         double temperature = TemperatureGenerator.GetTemperature(posX, elevation);
         return CirculationGenerator.GetAirFlow(posX, posY);
     }
+
+    public double GetMoisture(int posY){
+        return PrecipitationGenerator.GetMoisture(posY);
+    }
+
     public Config GetConfig(){
         return config;
     }
