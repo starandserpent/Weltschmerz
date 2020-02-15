@@ -2,14 +2,6 @@ using System.Numerics;
 using System;
 public class Circulation : CirculationGenerator{
     private Weltschmerz weltschmerz;
-    //m
-    private int latitude;
-
-    //m
-    private int longitude;
-
-    //m
-    private double maxElevation;
 
     //N*m/(mol*K)
     private double gasConstant = 8.31432;
@@ -26,29 +18,13 @@ public class Circulation : CirculationGenerator{
 
     private double increment;
 
-    private float circulationDecline;
-    private double temperatureInfluence;
-    private float exchangeCoefficient;
-    private int octaves;
-    public Circulation(Config config, Weltschmerz weltschmerz){
-        Configure(config);
+    public Circulation(Config config, Weltschmerz weltschmerz) : base(config){
         this.weltschmerz = weltschmerz;
-    }
-
-    public override void Configure(Config config){
-        this.latitude = config.latitude;
-        this.longitude = config.longitude;
-        this.maxElevation = config.maxElevation;
-        this.circulationDecline = config.circulationDecline;
-        this.temperatureInfluence = config.temperatureInfluence;
-        this.exchangeCoefficient = config.exchangeCoefficient;
-        this.octaves = config.circulationOctaves;
-
         increment = (gravitionalAcceleration * molarMass)/(temperatureDecrease * gasConstant);
     }
 
    public override Vector2 GetAirFlow(int posX, int posY) {
-        Vector4 airExchange = CalculateAirExchange(posX, posY) * exchangeCoefficient;
+        Vector4 airExchange = CalculateAirExchange(posX, posY) * config.exchangeCoefficient;
 
         airExchange = Vector4.Clamp(airExchange, new Vector4(-1F, -1F, -1F, -1F), new Vector4(1F, 1F, 1F, 1F));
 
@@ -72,7 +48,7 @@ public class Circulation : CirculationGenerator{
         float range = 0.0f;
         float intensity = 1.0f;
 
-        for (int octave = 0; octave < octaves; octave++) {
+        for (int octave = 0; octave < config.circulationOctaves; octave++) {
             Vector4 delta = CalculateDensityDelta(posX, posY, (int) (Math.Pow(octave, 2)));
             x += delta.X * intensity;
             y += delta.Y * intensity;
@@ -80,7 +56,7 @@ public class Circulation : CirculationGenerator{
             w += delta.W * intensity;
 
             range += intensity;
-            intensity *= circulationDecline;
+            intensity *= config.circulationDecline;
         }
         
         return new Vector4(x / range, y / range, z / range, w / range);
@@ -88,9 +64,9 @@ public class Circulation : CirculationGenerator{
 
     private Vector4 CalculateDensityDelta(int posX, int posY, int distance) {
 
-        int posXPositive = Math.Min(posX + distance, longitude - 1);
+        int posXPositive = Math.Min(posX + distance, config.longitude - 1);
         int posXNegative = Math.Max(posX - distance, 0);
-        int posYPositive = Math.Min(posY + distance, latitude - 1);
+        int posYPositive = Math.Min(posY + distance, config.latitude - 1);
         int posYNegative = Math.Max(posY - distance, 0);
 
         double xNegativeDensity = CalculateDensity(posXNegative, posY);
@@ -186,7 +162,7 @@ public class Circulation : CirculationGenerator{
     }
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {
-        float coriolisLatitude = (float) posY / latitude;
+        float coriolisLatitude = (float) posY / config.latitude;
         double equatorPosition = weltschmerz.TemperatureGenerator.EquatorPosition;
         double direction = Math.Sign(coriolisLatitude - equatorPosition);
         Vector4 matrix = WeltschmerzUtils.GetRotation((Math.PI / 2) * direction * airFlow.Length());

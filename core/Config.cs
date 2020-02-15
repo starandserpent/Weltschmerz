@@ -1,4 +1,4 @@
-public struct Config{
+public class Config{
 
     //Map
     public int seed {get; set;}
