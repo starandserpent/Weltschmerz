@@ -21,6 +21,6 @@ public class Noise : NoiseGenerator
             double n1 = noise.GetSimplexFractal((float) nx,(float) ny);
             double n2 = noise.GetSimplexFractal((float) nz,(float) nw);
 
-            return Math.Min(Math.Max(noise.GetSimplexFractal((float)n1, (float)n2) * config.terrainMP, config.minElevation), config.maxElevation);
+            return Math.Min(Math.Max(noise.GetSimplexFractal((float)n1, (float)n2), config.minElevation), config.maxElevation);
     }
 }

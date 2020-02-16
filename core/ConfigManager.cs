@@ -48,7 +48,6 @@ public class ConfigManager{
         //Circulation
         config.exchangeCoefficient  = hocon.GetFloat("circulation.exchange_coefficient");
         config.circulationOctaves  = hocon.GetInt("circulation.circulation_octaves");
-        config.temperatureInfluence  = hocon.GetFloat("circulation.temperature_influence");
         config.circulationDecline  = hocon.GetInt("circulation.circulation_decline");
 
         return config;

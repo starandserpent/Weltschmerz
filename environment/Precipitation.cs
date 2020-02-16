@@ -27,7 +27,7 @@ public class Precipitation : PrecipitationGenerator{
         double temp = (temperature + Math.Abs(config.minTemperature)) + GetOrotographicEffect(elevation, elevationGradient, wind, config.orographicEffect);
         double simulated = (2.0 * config.circulationIntensity) * temp * humidity;
         double precipitation = intensity * (estimated + simulated);
-        return Math.Max(precipitation, 0);
+        return Math.Min(Math.Max(precipitation, 0), config.maxPrecipitation);
     }
 
     private double GetHumidity(int posX, int posY, Vector2 wind, double elevation) {

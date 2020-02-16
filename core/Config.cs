@@ -33,6 +33,5 @@ public class Config{
     //Circulation
     public float exchangeCoefficient {get; set;}
     public int circulationOctaves {get; set;}
-    public float temperatureInfluence {get; set;}
     public int circulationDecline {get; set;}
 }
