@@ -24,7 +24,7 @@ public class Circulation : CirculationGenerator{
     }
 
    public override Vector2 GetAirFlow(int posX, int posY) {
-        Vector4 airExchange = CalculateAirExchange(posX, posY) * config.exchangeCoefficient;
+        Vector4 airExchange = CalculateAirExchange(posX, posY) * config.circulation.exchange_coefficient;
 
         airExchange = Vector4.Clamp(airExchange, new Vector4(-1F, -1F, -1F, -1F), new Vector4(1F, 1F, 1F, 1F));
 
@@ -48,7 +48,7 @@ public class Circulation : CirculationGenerator{
         float range = 0.0f;
         float intensity = 1.0f;
 
-        for (int octave = 0; octave < config.circulationOctaves; octave++) {
+        for (int octave = 0; octave < config.circulation.circulation_octaves; octave++) {
             Vector4 delta = CalculateDensityDelta(posX, posY, (int) (Math.Pow(octave, 2)));
             x += delta.X * intensity;
             y += delta.Y * intensity;
@@ -56,7 +56,7 @@ public class Circulation : CirculationGenerator{
             w += delta.W * intensity;
 
             range += intensity;
-            intensity *= config.circulationDecline;
+            intensity *= config.circulation.circulation_decline;
         }
         
         return new Vector4(x / range, y / range, z / range, w / range);
@@ -64,9 +64,9 @@ public class Circulation : CirculationGenerator{
 
     private Vector4 CalculateDensityDelta(int posX, int posY, int distance) {
 
-        int posXPositive = Math.Min(posX + distance, config.longitude - 1);
+        int posXPositive = Math.Min(posX + distance, config.map.longitude - 1);
         int posXNegative = Math.Max(posX - distance, 0);
-        int posYPositive = Math.Min(posY + distance, config.latitude - 1);
+        int posYPositive = Math.Min(posY + distance, config.map.latitude - 1);
         int posYNegative = Math.Max(posY - distance, 0);
 
         double xNegativeDensity = CalculateDensity(posXNegative, posY);
@@ -162,7 +162,7 @@ public class Circulation : CirculationGenerator{
     }
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {
-        float coriolisLatitude = (float) posY / config.latitude;
+        float coriolisLatitude = (float) posY / config.map.latitude;
         double equatorPosition = weltschmerz.TemperatureGenerator.EquatorPosition;
         double direction = Math.Sign(coriolisLatitude - equatorPosition);
         Vector4 matrix = WeltschmerzUtils.GetRotation((Math.PI / 2) * direction * airFlow.Length());

@@ -7,10 +7,10 @@ public class Temperature : TemperatureGenerator{
     //Constructor initializing class with Hocon values
     public Temperature(Config config) : base (config){
         //Equator position is at half world size (latitude)
-        this.EquatorPosition = (config.latitude / 2.0);
+        this.EquatorPosition = (config.map.latitude / 2.0);
 
         //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
-        tempDifference = (Math.Abs(config.minTemperature) + Math.Abs(config.maxTemperature)) / EquatorPosition;
+        tempDifference = (Math.Abs(config.temperature.min_temperature) + Math.Abs(config.temperature.max_temperature)) / EquatorPosition;
     }
 
     /* Get distance to equator from current position
@@ -28,15 +28,15 @@ public class Temperature : TemperatureGenerator{
     public override double GetTemperature(int posY, double elevation) {
 
         //The larger distance from equator the lower temperature, if position is on equator it is max temperature
-        double basicTemperature = (GetEquatorDistance(posY) * -tempDifference) + config.maxTemperature;
+        double basicTemperature = (GetEquatorDistance(posY) * -tempDifference) + config.temperature.max_temperature;
 
         //The higher elevation the more temperature decrease
-        double decrease = elevation * config.temperatureDecrease;
+        double decrease = elevation * config.temperature.temperature_decrease;
         if (WeltschmerzUtils.IsLand(elevation)) {
              basicTemperature -= decrease;
         }
 
         //Makes sure to keep temperature in set levels
-        return Math.Min(Math.Max(basicTemperature, config.minTemperature), config.maxTemperature);
+        return Math.Min(Math.Max(basicTemperature, config.temperature.min_temperature), config.temperature.max_temperature);
     }
 }
