@@ -9,8 +9,8 @@ public class ConfigManager{
     public static readonly string BASE_CONFIG_FILE_PATH = GetConfigFilePath("*"+CONFIG_NAME, BASE_CONFIG_DIRECTORY_PATH);
     public static Config GetConfig(){
        return GetConfig(BASE_CONFIG_FILE_PATH);
-;
     }
+    
     public static Config GetConfig(string path){
 
         Config config = new Config();

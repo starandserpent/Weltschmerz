@@ -6,7 +6,7 @@ public class Circulation : CirculationGenerator{
     //N*m/(mol*K)
     private double gasConstant = 8.31432;
     //Pa
-    private double pressureAtSeaLevel = 101325;
+    private int pressureAtSeaLevel = 101325;
 
     //kg/mol
     private double molarMass = 0.0289644;
@@ -24,7 +24,7 @@ public class Circulation : CirculationGenerator{
     }
 
    public override Vector2 GetAirFlow(int posX, int posY) {
-        Vector4 airExchange = CalculateAirExchange(posX, posY) * config.circulation.exchange_coefficient;
+        Vector4 airExchange = CalculateAirExchange(posX, posY) * (float) config.circulation.exchange_coefficient;
 
         airExchange = Vector4.Clamp(airExchange, new Vector4(-1F, -1F, -1F, -1F), new Vector4(1F, 1F, 1F, 1F));
 
@@ -147,18 +147,19 @@ public class Circulation : CirculationGenerator{
         return new Vector4((float)x, (float)y, (float)z, (float)w);
     }
 
-    public double CalculateDensity(int posX, int posY) {
+    public override double CalculateDensity(int posX, int posY) {
         double elevation = weltschmerz.NoiseGenerator.GetNoise(posX, posY);
-        double temperature = weltschmerz.TemperatureGenerator.GetTemperature(posY, elevation);
+        double temperature = weltschmerz.TemperatureGenerator.GetTemperature(posY, elevation) + 273.15;
         double density = CalculateBaseDensity(posY) * pressureAtSeaLevel;
-        temperature += 273.15;
-        density = density * Math.Pow(1 - (temperatureDecrease/temperature) * elevation, increment);
-        return density;
+        if(elevation < 0){
+            return density * Math.Pow(1 + (temperatureDecrease/temperature) * (11000), increment);
+        }
+        return density * Math.Pow(1 - (temperatureDecrease/temperature) * (elevation - 11000), increment);
     }
 
     private double CalculateBaseDensity(int posY) {
         double verticallity = (weltschmerz.TemperatureGenerator.GetEquatorDistance(posY)/weltschmerz.TemperatureGenerator.EquatorPosition) * 3;
-        return Math.Cos(verticallity * 3) + 1;    
+        return  1 - Math.Cos(verticallity * 3);    
     }
 
     private Vector2 ApplyCoriolisEffect(int posY, Vector2 airFlow) {

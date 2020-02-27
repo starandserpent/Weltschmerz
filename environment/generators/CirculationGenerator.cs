@@ -8,4 +8,6 @@ public abstract class CirculationGenerator
     }
 
     public abstract Vector2 GetAirFlow(int posX, int posY);
+
+    public abstract double CalculateDensity(int posX, int posY);
 }
