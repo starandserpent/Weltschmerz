@@ -32,32 +32,19 @@ public class Weltschmerz
         return NoiseGenerator.GetNoise(posX, posY);
     }
 
-    public double GetPrecipitation(int posX, int posY, double elevation, double temperature, Vector2 wind){
-        return PrecipitationGenerator.GetPrecipitation(posX, posY, elevation, temperature, wind);
-    }
-
     public double GetPrecipitation(int posX, int posY, double elevation, double temperature){
-        Vector2 wind = CirculationGenerator.GetAirFlow(posX, posY);
-        return PrecipitationGenerator.GetPrecipitation(posX, posY, elevation, temperature, wind);
+        return PrecipitationGenerator.GetPrecipitation(posX, posY, elevation, temperature);
     }
 
     public double GetPrecipitation(int posX, int posY, double elevation){
         double temperature = TemperatureGenerator.GetTemperature(posX, elevation);
-        Vector2 wind = CirculationGenerator.GetAirFlow(posX, posY);
-        return PrecipitationGenerator.GetPrecipitation(posX, posY, elevation, temperature, wind);
+        return PrecipitationGenerator.GetPrecipitation(posX, posY, elevation, temperature);
     }
 
     public double GetPrecipitation(int posX, int posY){
         double elevation = NoiseGenerator.GetNoise(posX, posY);
         double temperature = TemperatureGenerator.GetTemperature(posX, elevation);
-        Vector2 wind = CirculationGenerator.GetAirFlow(posX, posY);
-        return GetPrecipitation(posX, posY, elevation, temperature, wind);
-    }
-
-    public Vector2 GetAirFlow(int posX, int posY){
-        double elevation = NoiseGenerator.GetNoise(posX, posY);
-        double temperature = TemperatureGenerator.GetTemperature(posX, elevation);
-        return CirculationGenerator.GetAirFlow(posX, posY);
+        return GetPrecipitation(posX, posY, elevation, temperature);
     }
 
     public Config GetConfig(){

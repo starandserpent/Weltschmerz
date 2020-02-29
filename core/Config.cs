@@ -44,7 +44,7 @@ public class Config{
     public class Precipitation{
         public float orographic_effect {get; set;}
         public float circulation_intensity {get; set;}
-        public float precipitationI_intensity {get; set;}
+        public float precipitation_intensity {get; set;}
         public float iteration {get; set;}
         public int elevation_delta {get; set;}
         public int max_precipitation {get; set;}

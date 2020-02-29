@@ -10,7 +10,7 @@ public class Noise : NoiseGenerator
         multiplier = 1.0 / tau;
 
         noise.SetFrequency((float)config.noise.frequency);
-        noise.SetFractalOctaves(100);
+        noise.SetFractalOctaves(10);
     }
 
     public override double GetNoise(int x, int y)
@@ -22,9 +22,9 @@ public class Noise : NoiseGenerator
             double nz = Math.Sin(s * tau) * multiplier;
             double nw = Math.Sin(t * tau) * multiplier;
 
-            double n1 = noise.GetSimplexFractal((float) nx,(float) ny);
-            double n2 = noise.GetSimplexFractal((float) nz,(float) nw);
+            double n1 = noise.GetPerlinFractal((float) nx,(float) ny);
+            double n2 = noise.GetPerlinFractal((float) nz,(float) nw);
 
-            return Math.Min(Math.Max(noise.GetSimplexFractal((float)n1, (float)n2) * config.noise.max_elevation, config.noise.min_elevation), config.noise.max_elevation);
+            return Math.Min(Math.Max(noise.GetPerlinFractal((float)n1, (float)n2) * config.noise.max_elevation, config.noise.min_elevation), config.noise.max_elevation);
     }
 }

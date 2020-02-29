@@ -37,7 +37,7 @@ public class ConfigManager{
         //Precipitation
         config.precipitation.orographic_effect  = hocon.GetFloat("precipitation.orographic_effect");
         config.precipitation.circulation_intensity  = hocon.GetFloat("precipitation.circulation_intensity");
-        config.precipitation.precipitationI_intensity  = hocon.GetFloat("precipitation.precipitation_intensity");
+        config.precipitation.precipitation_intensity  = hocon.GetFloat("precipitation.precipitation_intensity");
         config.precipitation.iteration  = hocon.GetFloat("precipitation.iteration");
         config.precipitation.elevation_delta  = hocon.GetInt("precipitation.elevation_delta");
         config.precipitation.max_precipitation  = hocon.GetInt("precipitation.max_precipitation");
