@@ -6,8 +6,7 @@ public class Config{
     public Precipitation precipitation {get;}
     public Humidity humidity {get;}
     public Circulation circulation {get;}
-
-
+    
     public Config(){
         map = new Map();
         noise = new Noise();
@@ -28,9 +27,8 @@ public class Config{
     public class Noise{
         public int max_elevation {get; set;}
         public int min_elevation {get; set;}
-        public int terrainMP {get; set;}
-        public int avgTerrain {get; set;}
         public float frequency {get; set;}
+        public int octaves{get; set;}
     }
 
     //Temperature
@@ -42,13 +40,9 @@ public class Config{
 
     //Precipitation
     public class Precipitation{
-        public float orographic_effect {get; set;}
         public float circulation_intensity {get; set;}
         public float precipitation_intensity {get; set;}
-        public float iteration {get; set;}
-        public int elevation_delta {get; set;}
         public int max_precipitation {get; set;}
-        public int min_precipitation {get; set;}
     }
 
     //Humidity
@@ -59,8 +53,8 @@ public class Config{
     
     //Circulation
     public class Circulation{
-        public float exchange_coefficient {get; set;}
-        public int circulation_octaves {get; set;}
-        public int circulation_decline {get; set;}
+        public int wind_range {get; set;}
+        public float wind_intensity{get; set;}
+        public int pressure_at_sea_level{get; set;}
     }
 }

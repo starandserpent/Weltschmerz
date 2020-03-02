@@ -23,9 +23,8 @@ public class ConfigManager{
         config.map.longitude = hocon.GetInt("map.longitude");
 
         //Noise
-        config.noise.avgTerrain = hocon.GetInt("noise.average_terrain_hight");
         config.noise.frequency = hocon.GetFloat("noise.frequency");
-        config.noise.terrainMP = hocon.GetInt("noise.terrain_multiplaier");
+        config.noise.octaves = hocon.GetInt("noise.octaves");
         config.noise.max_elevation = hocon.GetInt("noise.max_elevation");
         config.noise.min_elevation = hocon.GetInt("noise.min_elevation");
 
@@ -35,11 +34,8 @@ public class ConfigManager{
         config.temperature.temperature_decrease  = hocon.GetFloat("temperature.temperature_decrease");
 
         //Precipitation
-        config.precipitation.orographic_effect  = hocon.GetFloat("precipitation.orographic_effect");
         config.precipitation.circulation_intensity  = hocon.GetFloat("precipitation.circulation_intensity");
         config.precipitation.precipitation_intensity  = hocon.GetFloat("precipitation.precipitation_intensity");
-        config.precipitation.iteration  = hocon.GetFloat("precipitation.iteration");
-        config.precipitation.elevation_delta  = hocon.GetInt("precipitation.elevation_delta");
         config.precipitation.max_precipitation  = hocon.GetInt("precipitation.max_precipitation");
 
         //Humidity
@@ -47,9 +43,9 @@ public class ConfigManager{
         config.humidity.evaporation  = hocon.GetFloat("humidity.evaporation");
     
         //Circulation
-        config.circulation.exchange_coefficient  = hocon.GetFloat("circulation.exchange_coefficient");
-        config.circulation.circulation_octaves  = hocon.GetInt("circulation.circulation_octaves");
-        config.circulation.circulation_decline  = hocon.GetInt("circulation.circulation_decline");
+        config.circulation.wind_intensity  = hocon.GetFloat("circulation.wind_intensity");
+        config.circulation.wind_range  = hocon.GetInt("circulation.wind_range");
+        config.circulation.pressure_at_sea_level  = hocon.GetInt("circulation.pressure_at_sea_level");
 
         return config;
     }
