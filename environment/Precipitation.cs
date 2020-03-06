@@ -19,32 +19,43 @@ public class Precipitation : PrecipitationGenerator{
 
     public override double GetHumidity(int posX, int posY, double elevation) {
         bool isLand = WeltschmerzUtils.IsLand(elevation);
-        double humidity = GetEvapotranspiration(posY, isLand);
-
-        double intensity = isLand ? config.precipitation.precipitation_intensity : 0;
+        double humidity = GetEvapotranspiration(posY, isLand)/(9 * config.circulation.wind_range);
 
         // calculate humidity
         double pressure = weltschmerz.CirculationGenerator.GetAirPressure(posX, posY);
 
-        for(int x = -3; x <= 3; x++){
-            for(int y = -3; y <= 3; y++){
+        for(int x = -config.circulation.wind_range; x <= config.circulation.wind_range; x++){
+            for(int y = -config.circulation.wind_range; y <= config.circulation.wind_range; y++){
                 int posx = Math.Max(Math.Min(posX + x, config.map.longitude - 1), 0);
                 int posy = Math.Max(Math.Min(posY + y, config.map.latitude - 1), 0);
-                Vector2 vector = new Vector2(posx, posy);
-                humidity += WindExchange(posx, posy, pressure, elevation)/(vector.Length() + 1);
+
+                if(posx != posX && posy != posY){
+                double newElevation = weltschmerz.NoiseGenerator.GetNoise(posX, posY);
+                double elevationDelta = elevation - newElevation;
+                Vector2 vector = new Vector2(x, y);
+                // Godot.GD.Print("Before: " + humidity);
+                double distance = Math.Sqrt(vector.LengthSquared() + Math.Pow(elevationDelta, 2.0));
+               // Godot.GD.Print("Before: " + humidity);
+               double evaporation = GetEvapotranspiration(posy, WeltschmerzUtils.IsLand(newElevation))/(9 * config.circulation.wind_range);
+               double wind = weltschmerz.CirculationGenerator.GetAirFlow(posx, posy, pressure);
+               
+               if(wind > 0){
+                    humidity += ((evaporation * wind)/distance) + (GetEvapotranspiration(posY, isLand)/(9 * config.circulation.wind_range));
+               }else if(wind == 0){
+                    humidity += (GetEvapotranspiration(posY, isLand)/(9 * config.circulation.wind_range));
+               }else{
+                    humidity += (GetEvapotranspiration(posY, isLand)/(9 * config.circulation.wind_range))  + ((evaporation * wind)/distance);
+               }
+
+              //  Godot.GD.Print("After: " + humidity);
+                }else{
+                     humidity += (GetEvapotranspiration(posY, isLand)/(9 * config.circulation.wind_range));
+               
+                }
             }
         }
 
         return humidity;
-    }
-
-    private double WindExchange(int posX, int posY, double basePressure, double baseElevation){
-        double elevation = weltschmerz.NoiseGenerator.GetNoise(posX, posY);
-        Vector2 wind = weltschmerz.CirculationGenerator.GetAirFlow(posX, posY, basePressure);
-        bool isLand = WeltschmerzUtils.IsLand(elevation);
-        double airExchange = GetEvapotranspiration(posY, isLand);
-        airExchange *= (wind.X - wind.Y);
-        return airExchange * config.circulation.wind_intensity;
     }
 
     public override double GetEvapotranspiration(int posY, bool isLand) {
@@ -58,9 +69,10 @@ public class Precipitation : PrecipitationGenerator{
         evapotranspiration *= GetMoisture(posY);
         return evapotranspiration;
     }
+
     public override double GetMoisture(int posY) {
         double y = posY/weltschmerz.TemperatureGenerator.EquatorPosition;
-        double moisture =  1 - (Math.Cos(y * Math.PI) + Math.Cos(3*y*Math.PI))/2;
+        double moisture =  2 - (Math.Cos(y * Math.PI) + Math.Cos(3*y*Math.PI))/2;
         return moisture * config.precipitation.max_precipitation;
     }
 }

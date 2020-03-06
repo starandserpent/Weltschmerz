@@ -20,12 +20,13 @@ public class Circulation : CirculationGenerator{
         increment = (GRAVITIONAL_ACCELERATION * MOLAR_MASS)/(config.temperature.temperature_decrease * GAS_CONSTANT);
     }
 
-   public override Vector2 GetAirFlow(int posX, int posY, double pressure){
+   public override double GetAirFlow(int posX, int posY, double pressure){
        Vector2 wind = new Vector2();
        wind.X = (float) pressure;
        wind.Y = (float) GetAirPressure(posX, posY);
-
-        return Vector2.Normalize(wind); 
+       wind = Vector2.Normalize(wind);
+       double gradient = (wind.Y - wind.X) ;
+        return gradient * config.circulation.wind_intensity;
     }
 
     public override double GetAirPressure(int posX, int posY) {
@@ -40,6 +41,6 @@ public class Circulation : CirculationGenerator{
 
     private double GetBasePressure(int posY) {
         double position = (weltschmerz.TemperatureGenerator.GetEquatorDistance(posY)/weltschmerz.TemperatureGenerator.EquatorPosition) * 3;
-        return 1.1 - Math.Cos(position * 3);    
+        return 1.5 - Math.Cos(position * 3);    
     }
 }
