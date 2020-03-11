@@ -24,9 +24,9 @@ public class Noise : NoiseGenerator
             double nz = Math.Sin(s) * multiplier;
             double nw = Math.Sin(t) * multiplier;
 
-            double n1 = noise.GetSimplexFractal((float) nx,(float) ny);
-            double n2 = noise.GetSimplexFractal((float) nz,(float) nw);
+            double n1 = noise.GetPerlinFractal((float) nx,(float) ny);
+            double n2 = noise.GetPerlinFractal((float) nz,(float) nw);
 
-            return Math.Min(Math.Max((noise.GetSimplexFractal((float)n1, (float)n2) * averageElevation) + config.noise.min_elevation, config.noise.min_elevation), config.noise.max_elevation);
+            return Math.Min(Math.Max((noise.GetPerlinFractal((float)n1, (float)n2) * averageElevation) + config.noise.min_elevation, config.noise.min_elevation), config.noise.max_elevation);
     }
 }

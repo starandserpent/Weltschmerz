@@ -10,7 +10,7 @@ public class Temperature : TemperatureGenerator{
         this.EquatorPosition = (config.map.latitude / 2.0);
 
         //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
-        tempDifference = (Math.Abs(config.temperature.min_temperature) + Math.Abs(config.temperature.max_temperature)) / EquatorPosition;
+        config.temperature.temperature_decrease = (float)((float)(Math.Abs(config.temperature.min_temperature) + config.temperature.max_temperature) / (float)EquatorPosition);
     }
 
     /* 
@@ -18,16 +18,11 @@ public class Temperature : TemperatureGenerator{
     * Calculation differens if player is on north or south pole
     */
     public override double GetEquatorDistance(int posY){
-
-        if(posY < EquatorPosition){
-            return Math.Abs(posY - EquatorPosition);
-        }
-
         return Math.Abs(EquatorPosition - posY);
     }
 
     public override double GetTemperatureAtSeaLevel(int posY){
-        return (GetEquatorDistance(posY) * -tempDifference) + config.temperature.max_temperature;
+        return config.temperature.max_temperature - (GetEquatorDistance(posY) * config.temperature.temperature_decrease);
     }
 
     public override double GetTemperature(int posY, double elevation) {
@@ -35,9 +30,8 @@ public class Temperature : TemperatureGenerator{
         //The larger distance from equator the lower temperature, if position is on equator it is max temperature
         double basicTemperature = GetTemperatureAtSeaLevel(posY);
         //The higher elevation the more temperature decrease
-        double decrease = elevation * config.temperature.temperature_decrease;
         if (WeltschmerzUtils.IsLand(elevation)) {
-             basicTemperature -= decrease;
+             basicTemperature -= elevation * config.temperature.temperature_decrease;
         }
 
         //Makes sure to keep temperature in set levels

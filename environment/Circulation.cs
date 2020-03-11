@@ -20,23 +20,30 @@ public class Circulation : CirculationGenerator{
         increment = (GRAVITIONAL_ACCELERATION * MOLAR_MASS)/(config.temperature.temperature_decrease * GAS_CONSTANT);
     }
 
-   public override double GetAirFlow(int posX, int posY, double pressure){
-       Vector2 wind = new Vector2();
+   public override double GetAirFlow(int posX, int posY, double pressure, double newev){
+       if(WeltschmerzUtils.IsLand(newev)){
+                  Vector2 wind = new Vector2();
+       double newPressure =  GetAirPressure(posX, posY);
        wind.X = (float) pressure;
-       wind.Y = (float) GetAirPressure(posX, posY);
-       wind = Vector2.Normalize(wind);
-       double gradient = (wind.Y - wind.X) ;
-        return gradient * config.circulation.wind_intensity;
+       wind.Y = (float) newPressure;
+              wind = Vector2.Normalize(wind);
+
+           return (wind.X - wind.Y);
+       }else{
+           return 1;
+       }
     }
 
     public override double GetAirPressure(int posX, int posY) {
         double elevation = weltschmerz.NoiseGenerator.GetNoise(posX, posY);
         double temperature = weltschmerz.TemperatureGenerator.GetTemperatureAtSeaLevel(posY) + 273.15;
         double density = GetBasePressure(posY) * config.circulation.pressure_at_sea_level;
-        if(elevation < 0){
+        if(elevation <= 0){
             return density * Math.Pow(1 + (config.temperature.temperature_decrease/temperature) * 11000, increment);
         }
-        return density * Math.Pow(1 - (config.temperature.temperature_decrease/temperature) * (elevation - 11000), increment);
+
+        density *= Math.Pow(1 - (config.temperature.temperature_decrease/temperature) * (elevation - 11000), increment);
+        return density;
     }
 
     private double GetBasePressure(int posY) {
