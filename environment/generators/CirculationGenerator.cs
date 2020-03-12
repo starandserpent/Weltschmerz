@@ -1,13 +1,12 @@
 using System.Numerics;
-public abstract class CirculationGenerator
-{
+public abstract class CirculationGenerator {
     protected Config config;
 
-    public CirculationGenerator(Config config){
+    public CirculationGenerator (Config config) {
         this.config = config;
     }
 
-    public abstract double GetAirFlow(int posX, int posY, double pressure, double newev);
+    public abstract double GetAirFlow (int posX, int posY, double pressure, double elevation);
 
-    public abstract double GetAirPressure(int posX, int posY);
+    public abstract double GetAirPressure (int posX, int posY, double elevation);
 }

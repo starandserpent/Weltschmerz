@@ -1,10 +1,9 @@
-public abstract class NoiseGenerator
-{
+public abstract class NoiseGenerator {
     protected Config config;
 
-    public NoiseGenerator(Config config){
+    public NoiseGenerator (Config config) {
         this.config = config;
     }
-    
-    public abstract double GetNoise(int posX, int posY);
+
+    public abstract double GetNoise (int posX, int posY);
 }
