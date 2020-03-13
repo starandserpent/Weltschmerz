@@ -1,3 +1,4 @@
+
 /// <summary>
 /// Configuration class containing all neccesary variables for generation
 /// This class does not follow usual C# syntax because this class is parsed into JSON so it can be loaded by HOCON
@@ -175,6 +176,7 @@ public class Config {
         /// <summary>
         /// Default pressure reference 
         /// Value used mostly in engine
+        /// Unit is Pa
         /// </summary>
         public int pressure_at_sea_level { get; set; }
     }

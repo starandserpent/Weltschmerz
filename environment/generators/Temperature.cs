@@ -1,27 +1,29 @@
 using System;
 
+/// <summary>
+/// Default generator for temperature
+/// </summary>
 public class Temperature : TemperatureGenerator {
-    //Constructor initializing class with Hocon values
     public Temperature (Weltschmerz weltschmerz, Config config) : base (weltschmerz, config) {}
 
-    /* 
-     * Get distance to equator from current position
-     * Calculation differens if player is on north or south pole
-     */
     public override double GetEquatorDistance (int posY) {
         return Math.Abs (EquatorPosition - posY);
     }
 
     public override double GetTemperatureAtSeaLevel (int posY) {
+        // Calculates temperature based on equator distance 
+        // Lapse rate is used for decreasing temperature with higher latitude
+        // he larger distance from equator the lower temperature
         return config.temperature.max_temperature - (GetEquatorDistance (posY) * LapseRate);
     }
 
     public override double GetTemperature (int posY, double elevation) {
 
-        //The larger distance from equator the lower temperature, if position is on equator it is max temperature
+        //Basic temperature on position certain latitude
         double basicTemperature = GetTemperatureAtSeaLevel (posY);
-        //The higher elevation the more temperature decrease
+
         if (weltschmerz.ElevationGenerator.IsLand (elevation)) {
+            //The higher elevation the more temperature decrease
             basicTemperature -= elevation * LapseRate;
         }
 
@@ -30,11 +32,11 @@ public class Temperature : TemperatureGenerator {
     }
 
     public override void Update(){
-        //Equator position is at half world size (latitude)
+        //Equator position is at half latitude
         this.EquatorPosition = (config.map.latitude / 2.0);
 
-        //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
-        LapseRate = (float) ((float) (Math.Abs (config.temperature.min_temperature) + config.temperature.max_temperature) / (float) EquatorPosition);
+        // Lapse rate is calculated by dividing distance from pole to equator from temperature range
+        LapseRate = ((Math.Abs (config.temperature.min_temperature) + config.temperature.max_temperature) / EquatorPosition);
     }
 
     public override void ChangeConfig(Config config){
