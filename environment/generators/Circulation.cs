@@ -1,7 +1,6 @@
 using System;
 using System.Numerics;
 public class Circulation : CirculationGenerator {
-    private Weltschmerz weltschmerz;
 
     //N*m/(mol*K)
     private static readonly double GAS_CONSTANT = 8.31432;
@@ -15,13 +14,12 @@ public class Circulation : CirculationGenerator {
 
     private double increment;
 
-    public Circulation (Config config, Weltschmerz weltschmerz) : base (config) {
-        this.weltschmerz = weltschmerz;
+    public Circulation (Weltschmerz weltschmerz, Config config) : base (weltschmerz, config) {
         increment = (GRAVITIONAL_ACCELERATION * MOLAR_MASS) / (weltschmerz.TemperatureGenerator.LapseRate * GAS_CONSTANT);
     }
 
     public override double GetAirFlow (int posX, int posY, double pressure, double elevation) {
-        if (WeltschmerzUtils.IsLand (elevation)) {
+        if (weltschmerz.ElevationGenerator.IsLand (elevation)) {
             Vector2 wind = new Vector2 ();
             double newPressure = GetAirPressure (posX, posY, elevation);
             wind.X = (float) pressure;
@@ -48,5 +46,12 @@ public class Circulation : CirculationGenerator {
     private double GetBasePressure (int posY) {
         double position = (weltschmerz.TemperatureGenerator.GetEquatorDistance (posY) / weltschmerz.TemperatureGenerator.EquatorPosition) * 3;
         return 1.5 - Math.Cos (position * 3);
+    }
+
+    public override void Update(){}
+
+    public override void ChangeConfig(Config config){
+        this.config = config;
+        Update(); 
     }
 }

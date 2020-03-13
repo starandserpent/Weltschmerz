@@ -1,17 +1,8 @@
 using System;
 
 public class Temperature : TemperatureGenerator {
-
-    private double tempDifference;
-
     //Constructor initializing class with Hocon values
-    public Temperature (Config config) : base (config) {
-        //Equator position is at half world size (latitude)
-        this.EquatorPosition = (config.map.latitude / 2.0);
-
-        //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
-        LapseRate = (float) ((float) (Math.Abs (config.temperature.min_temperature) + config.temperature.max_temperature) / (float) EquatorPosition);
-    }
+    public Temperature (Weltschmerz weltschmerz, Config config) : base (weltschmerz, config) {}
 
     /* 
      * Get distance to equator from current position
@@ -30,11 +21,24 @@ public class Temperature : TemperatureGenerator {
         //The larger distance from equator the lower temperature, if position is on equator it is max temperature
         double basicTemperature = GetTemperatureAtSeaLevel (posY);
         //The higher elevation the more temperature decrease
-        if (WeltschmerzUtils.IsLand (elevation)) {
+        if (weltschmerz.ElevationGenerator.IsLand (elevation)) {
             basicTemperature -= elevation * LapseRate;
         }
 
         //Makes sure to keep temperature in set levels
         return Math.Min (Math.Max (basicTemperature, config.temperature.min_temperature), config.temperature.max_temperature);
+    }
+
+    public override void Update(){
+        //Equator position is at half world size (latitude)
+        this.EquatorPosition = (config.map.latitude / 2.0);
+
+        //Temperature difference sets how much temperature differs per distance from equator (the bigger world the smaller change)
+        LapseRate = (float) ((float) (Math.Abs (config.temperature.min_temperature) + config.temperature.max_temperature) / (float) EquatorPosition);
+    }
+
+    public override void ChangeConfig(Config config){
+        this.config = config;
+        Update(); 
     }
 }

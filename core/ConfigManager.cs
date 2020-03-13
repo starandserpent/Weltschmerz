@@ -2,46 +2,83 @@ using System;
 using System.IO;
 using Akka.Configuration;
 using AkkaConfig = Akka.Configuration.Config;
+
+/// <summary>
+/// Class used for parsing a hocon or json config file to Weltschmerz config class
+/// </summary>
 public class ConfigManager {
-    public static readonly string CONFIG_NAME = "config.conf";
+
+    /// <summary>
+    /// Default name of config file
+    /// Weltschmerz will search for this file when initialized
+    /// </summary>
+    public static readonly string CONFIG_FILE_NAME = "config.conf";
+
+    /// <summary>
+    /// Path to base directory where weltschmerz is located
+    /// </summary>
     public static readonly string BASE_DIRECTORY = AppDomain.CurrentDomain.BaseDirectory;
-    public static readonly string BASE_CONFIG_DIRECTORY_PATH = GetConfigDirectoryPath ("*" + CONFIG_NAME, BASE_DIRECTORY);
-    public static readonly string BASE_CONFIG_FILE_PATH = GetConfigFilePath ("*" + CONFIG_NAME, BASE_CONFIG_DIRECTORY_PATH);
+
+    /// <summary>
+    /// Path to base directory where config file is located
+    /// </summary>
+    public static readonly string BASE_CONFIG_FILE_DIRECTORY_PATH = FindDirectory ("*" + CONFIG_FILE_NAME, BASE_DIRECTORY);
+
+    /// <summary>
+    /// Path to config file
+    /// </summary>
+    public static readonly string BASE_CONFIG_FILE_PATH = FindFile ("*" + CONFIG_FILE_NAME, BASE_CONFIG_FILE_DIRECTORY_PATH);
+
+    /// <summary>
+    /// Gets configuration from default file location (<see cref="ConfigManager"/>)
+    /// </summary>
     public static Config GetConfig () {
         return GetConfig (BASE_CONFIG_FILE_PATH);
     }
 
+    /// <summary>
+    /// Gets configuration from specified file location (<see cref="ConfigManager"/>)
+    /// Use absolute path to file
+    /// </summary>
     public static Config GetConfig (string path) {
 
         Config config = new Config ();
 
+        //Parses valuse from hocon or json file to Akka class
         AkkaConfig hocon = ConfigurationFactory.ParseString (File.ReadAllText (path));
 
         //Map
+        //Copies all map values from hocon or json file to Config class
         config.map.seed = hocon.GetInt ("map.seed");
         config.map.latitude = hocon.GetInt ("map.latitude");
         config.map.longitude = hocon.GetInt ("map.longitude");
 
-        //Noise
-        config.noise.frequency = hocon.GetFloat ("noise.frequency");
-        config.noise.octaves = hocon.GetInt ("noise.octaves");
-        config.noise.max_elevation = hocon.GetInt ("noise.max_elevation");
-        config.noise.min_elevation = hocon.GetInt ("noise.min_elevation");
+        //Elevation
+        //Copies all elevation values from hocon or json file to Config class
+        config.elevation.frequency = hocon.GetFloat ("elevation.frequency");
+        config.elevation.octaves = hocon.GetInt ("elevation.octaves");
+        config.elevation.max_elevation = hocon.GetInt ("elevation.max_elevation");
+        config.elevation.min_elevation = hocon.GetInt ("elevation.min_elevation");
+        config.elevation.water_level = hocon.GetInt ("elevation.water_level");
 
         //Temperature
+        //Copies all temperature values from hocon or json file to Config class
         config.temperature.max_temperature = hocon.GetInt ("temperature.max_temperature");
         config.temperature.min_temperature = hocon.GetInt ("temperature.min_temperature");
 
         //Precipitation
+        //Copies precipitation map values from hocon or json file to Config class
         config.precipitation.circulation_intensity = hocon.GetFloat ("precipitation.circulation_intensity");
         config.precipitation.precipitation_intensity = hocon.GetFloat ("precipitation.precipitation_intensity");
         config.precipitation.max_precipitation = hocon.GetInt ("precipitation.max_precipitation");
 
         //Humidity
+        //Copies all humidity values from hocon or json file to Config class
         config.humidity.transpiration = hocon.GetFloat ("humidity.transpiration");
         config.humidity.evaporation = hocon.GetFloat ("humidity.evaporation");
 
         //Circulation
+        //Copies all circulation values from hocon or json file to Config class
         config.circulation.wind_intensity = hocon.GetFloat ("circulation.wind_intensity");
         config.circulation.wind_range = hocon.GetInt ("circulation.wind_range");
         config.circulation.pressure_at_sea_level = hocon.GetInt ("circulation.pressure_at_sea_level");
@@ -49,8 +86,12 @@ public class ConfigManager {
         return config;
     }
 
-    public static string GetConfigFilePath (string fileName, string path) {
-        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (path);
+    /// <summary>
+    /// Finds an absolute path to a file with specified name in specified directory
+    /// Returns an absolute path of the file as string
+    /// </summary>
+    public static string FindFile (string fileName, string directory) {
+        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (directory);
         FileInfo[] filesInDir = hdDirectoryInWhichToSearch.GetFiles (fileName, SearchOption.AllDirectories);
 
         string fullName = "";
@@ -61,9 +102,13 @@ public class ConfigManager {
         return fullName;
     }
 
-    public static string GetConfigDirectoryPath (string fileName, string path) {
-        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (path);
-        FileInfo[] filesInDir = hdDirectoryInWhichToSearch.GetFiles (fileName, SearchOption.AllDirectories);
+    /// <summary>
+    /// Finds an absolute path to a directory with specified name in base directory
+    /// Returns an absolute path of the directory as string
+    /// </summary>
+    public static string FindDirectory (string directoryName, string baseDirectory) {
+        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (baseDirectory);
+        FileInfo[] filesInDir = hdDirectoryInWhichToSearch.GetFiles (directoryName, SearchOption.AllDirectories);
 
         string fullName = "";
         foreach (FileInfo foundFile in filesInDir) {

@@ -1,23 +1,31 @@
 using System.Numerics;
-//Class for handling all environmental variables together
+
+/// <summary>
+/// Main class of the Weltschmerz generator
+/// Initializes all generators and provides all their functions in one class
+/// </summary>
 public class Weltschmerz {
-    public NoiseGenerator NoiseGenerator { get; set; }
+    /// <summary>
+    /// Main class of the Weltschmerz generator
+    /// Initializes all generators and provides all their functions in one class
+    /// </summary>
+    public ElevationGenerator ElevationGenerator { get; set; }
     public CirculationGenerator CirculationGenerator { get; set; }
     public PrecipitationGenerator PrecipitationGenerator { get; set; }
     public TemperatureGenerator TemperatureGenerator { get; set; }
     private Config config;
-    public Weltschmerz () : this (ConfigManager.GetConfig ()) { }
+    public Weltschmerz () : this (ConfigManager.GetConfig ()) {}
 
     public Weltschmerz (Config config) {
         this.config = config;
-        this.NoiseGenerator = new Noise (config);
-        this.TemperatureGenerator = new Temperature (config);
-        this.CirculationGenerator = new Circulation (config, this);
-        this.PrecipitationGenerator = new Precipitation (config, this);
+        this.ElevationGenerator = new Elevation (this, config);
+        this.TemperatureGenerator = new Temperature (this, config);
+        this.CirculationGenerator = new Circulation (this, config);
+        this.PrecipitationGenerator = new Precipitation (this, config);
     }
 
     public double GetTemperature (int posX, int posY) {
-        double elevation = NoiseGenerator.GetNoise (posX, posY);
+        double elevation = ElevationGenerator.GetNoise (posX, posY);
         return GetTemperature (posY, elevation);
     }
 
@@ -26,7 +34,7 @@ public class Weltschmerz {
     }
 
     public double GetElevation (int posX, int posY) {
-        return NoiseGenerator.GetNoise (posX, posY);
+        return ElevationGenerator.GetNoise (posX, posY);
     }
 
     public double GetPrecipitation (int posX, int posY, double elevation, double temperature) {
@@ -39,7 +47,7 @@ public class Weltschmerz {
     }
 
     public double GetPrecipitation (int posX, int posY) {
-        double elevation = NoiseGenerator.GetNoise (posX, posY);
+        double elevation = ElevationGenerator.GetNoise (posX, posY);
         double temperature = TemperatureGenerator.GetTemperature (posX, elevation);
         return GetPrecipitation (posX, posY, elevation, temperature);
     }

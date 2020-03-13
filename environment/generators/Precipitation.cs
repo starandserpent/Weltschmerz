@@ -1,14 +1,10 @@
 using System;
 using System.Numerics;
 public class Precipitation : PrecipitationGenerator {
-    private Weltschmerz weltschmerz;
-
-    public Precipitation (Config config, Weltschmerz weltschmerz) : base (config) {
-        this.weltschmerz = weltschmerz;
-    }
+    public Precipitation (Weltschmerz weltschmerz, Config config) : base (weltschmerz, config) {}
 
     public override double GetPrecipitation (int posX, int posY, double elevation, double temperature) {
-        double intensity = WeltschmerzUtils.IsLand (elevation) ? config.precipitation.precipitation_intensity : 0;
+        double intensity = weltschmerz.ElevationGenerator.IsLand (elevation) ? config.precipitation.precipitation_intensity : 0;
         double humidity = GetHumidity (posX, posY, elevation);
         double estimated = (1.0 - config.precipitation.circulation_intensity) * GetMoisture (posY);
         double temp = temperature / (config.temperature.max_temperature + Math.Abs (config.temperature.min_temperature));
@@ -18,7 +14,7 @@ public class Precipitation : PrecipitationGenerator {
     }
 
     public override double GetHumidity (int posX, int posY, double elevation) {
-        bool isLand = WeltschmerzUtils.IsLand (elevation);
+        bool isLand = weltschmerz.ElevationGenerator.IsLand (elevation);
         double humidity = GetEvapotranspiration (posY, isLand) / (2 * config.circulation.wind_range);
 
         // calculate humidity
@@ -28,12 +24,12 @@ public class Precipitation : PrecipitationGenerator {
             int posx = Math.Max (posX - i, 0);
             int posy = Math.Min (posY + i, config.map.latitude - 1);
 
-            double newElevation = weltschmerz.NoiseGenerator.GetNoise (posx, posy);
+            double newElevation = weltschmerz.ElevationGenerator.GetNoise (posx, posy);
             double elevationDelta = elevation - newElevation;
             Vector2 vector = new Vector2 (i, i);
 
             double distance = Math.Sqrt (vector.LengthSquared () + Math.Pow (elevationDelta, 2.0));
-            double evaporation = GetEvapotranspiration (posy, WeltschmerzUtils.IsLand (newElevation)) / (2 * config.circulation.wind_range);
+            double evaporation = GetEvapotranspiration (posy, weltschmerz.ElevationGenerator.IsLand (newElevation)) / (2 * config.circulation.wind_range);
             double wind = weltschmerz.CirculationGenerator.GetAirFlow (posx, posy, pressure, newElevation);
 
             if (wind == 0) {
@@ -44,11 +40,11 @@ public class Precipitation : PrecipitationGenerator {
 
             posx = Math.Min (posX + i, config.map.longitude - 1);
             posy = Math.Max (posY - i, 0);
-            newElevation = weltschmerz.NoiseGenerator.GetNoise (posx, posy);
+            newElevation = weltschmerz.ElevationGenerator.GetNoise (posx, posy);
             elevationDelta = elevation - newElevation;
             distance = Math.Sqrt (vector.LengthSquared () + Math.Pow (elevationDelta, 2.0));
 
-            evaporation = GetEvapotranspiration (posy, WeltschmerzUtils.IsLand (newElevation)) / (2 * config.circulation.wind_range);
+            evaporation = GetEvapotranspiration (posy, weltschmerz.ElevationGenerator.IsLand (newElevation)) / (2 * config.circulation.wind_range);
             wind = weltschmerz.CirculationGenerator.GetAirFlow (posx, posy, pressure, newElevation);
 
             if (wind == 0) {
@@ -77,5 +73,12 @@ public class Precipitation : PrecipitationGenerator {
         double y = posY / weltschmerz.TemperatureGenerator.EquatorPosition;
         double moisture = ((1.0 / 3.0) - Math.Cos (y * Math.PI)) + ((1.0 / 3.0) - Math.Cos (3 * y * Math.PI));
         return moisture * config.precipitation.max_precipitation / 3;
+    }
+
+    public override void Update(){}
+
+    public override void ChangeConfig(Config config){
+        this.config = config;
+        Update(); 
     }
 }

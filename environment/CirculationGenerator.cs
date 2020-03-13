@@ -1,10 +1,7 @@
 using System.Numerics;
-public abstract class CirculationGenerator {
-    protected Config config;
+public abstract class CirculationGenerator : Generator {
 
-    public CirculationGenerator (Config config) {
-        this.config = config;
-    }
+    public CirculationGenerator (Weltschmerz weltschmerz, Config config) : base(weltschmerz, config) {}
 
     public abstract double GetAirFlow (int posX, int posY, double pressure, double elevation);
 
