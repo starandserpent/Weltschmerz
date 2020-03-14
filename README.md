@@ -8,8 +8,6 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
   * [Follow us](#follow-us)
@@ -17,11 +15,9 @@
 
 ## About the project
 
-Weltschmerz is C# world generator library for any platform.
+Weltschmerz is a library for simulating terrain, moisture, temperature, wind, and precipitation based on real environmental principles. The values Weltschmerz outputs can be used, for example, for generating realistic looking maps or terrain. Weltschmerz is primarily aimed at games and does not produce scientifically accurate data.
 
-World planner for Terra. Generates various maps which are then combined into a high level representation of a world map. Weltschmerz is the architect who doesn't get his hands dirty.
-
-Weltschmerz is world generater for [Rituals  of the old](https://www.ritualsoftheold.com/) game developed in [Godot Engine](https://godotengine.org/).
+Weltschmerz is used in [Foreman](https://github.com/starandserpent/Foreman) to generate 3D voxel terrain and in [World map generator](https://github.com/starandserpent/World-map-generator) to generate  realistic looking maps.
 
 ## Getting Started
 
@@ -33,7 +29,7 @@ Make sure you have installed all of the following prerequisites on your developm
 
 #### Windows
 
-* [Visual Studio 2019](https://www.visualstudio.com/vs/) with *.NET Desktop development* and *Universal Windows Platform Develpment*
+* *.NET Desktop development* and *Universal Windows Platform Develpment*
 
 #### Linux
 To be added
@@ -42,9 +38,12 @@ To be added
 
 * [Git](https://git-scm.com/downloads) - OSX and Linux machines typically have this already installed.
 
-* [Config file](https://github.com/starandserpent/Weltschmerz/blob/master/config/config.conf) in your repositiory
+* [Config file](https://github.com/starandserpent/Weltschmerz/blob/master/config/config.conf) in your project folder
 
-* [C# Hocon library](https://www.nuget.org/packages/Hocon.Configuration/) project reference in your .csproj file
+### Installation
+A step by step series how to install library into your project
+
+1) First important step is including [C# Hocon library](https://www.nuget.org/packages/Hocon.Configuration/) in your .csproj file.
 
 ```
   <ItemGroup>
@@ -52,65 +51,47 @@ To be added
       <Version>2.0.3</Version>
     </PackageReference>
   </ItemGroup>
-
 ```
 
-### Installation
-A step by step series how to install library into your project
+Now you have 2 options how to include Weltschmerz in your project.
 
 #### As git submodule
-* Go to your project folder
-* Initialize git in your repository (if it is not already initialize)
+2) Go to your project folder
+3) Initialize git in your repository
 ```git
 git init
 ```
-* Add Weltschmerz as git submodule
+4) Add Weltschmerz as git submodule
 ```git
 git submodule add git@github.com:starandserpent/Weltschmerz.git --recusive
 ```
-* Include .cs files from Weltschmerz in your project
+5) Include all .cs files from Weltschmerz in your project
 
 #### As .dll library
-* Open Weltschmerz in Visual Studio 2019
-* Build solution
-* Open your project
-* Add builded library as reference
+2) Open Weltschmerz in your IDE
+3) Build solution
+4) Open your project
+5) Add Weltschmerz library as reference into your project
 
 
 ## Usage
-When you initialize main Weltschmerz class you can then access all possible generated values from this class
+You can access all environmental variables from *Weltschmerz* class
 ```csharp
     Weltschmerz weltschmerz = new Weltschmerz();
     double elevation = weltschmerz.GetElevation(0, 0);
 ```
 
-If you want to use replace any weltschmerz generator you can use abstract class
+If you want to replace any generator in weltschmerz by your own, use abstract class
 ```csharp
     weltschmerz.ElevationGenerator = new Elevation();
 ```
 
-You can load your custom config file
+Default config file is named "config.conf", use *ConfigManager* to load your custom config files.
 ```csharp
     string path = "yourpath/to/file"
     Config config = ConfigManager.GetConfig(path);
 ```
-
-
-For further implementation as library in 3D game see [Voxel-demo](https://github.com/starandserpent/Voxel-demo) or as map generator [World-map-generator](https://github.com/starandserpent/World-map-generator)
-
-## Roadmap
-
-See the [open issues](https://github.com/starandserpent/Weltschmerz/issues) for a list of proposed features (and known issues).
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+For further implementation as library in 3D game see [Foreman](https://github.com/starandserpent/Foreman) or for map generation see [World-map-generator](https://github.com/starandserpent/World-map-generator)
 
 ## Licence
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
@@ -123,3 +104,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Website: https://www.ritualsoftheold.com/
 * IndieDB: https://www.indiedb.com/games/rituals-of-the-old
 * Subscribe: https://www.youtube.com/c/Ritualsoftheold
+
+This library is also used in [Rituals  of the old](https://www.ritualsoftheold.com/).
