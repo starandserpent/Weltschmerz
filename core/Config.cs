@@ -84,7 +84,6 @@ public class Config {
 
         /// <summary>
         /// Deepest level of an ocean
-        /// Water is below 0 terrain elevation
         /// </summary>
         public int min_elevation { get; set; }
 
@@ -125,6 +124,7 @@ public class Config {
     public class Precipitation {
         /// <summary>
         /// Effect of circulation on precipitation
+        /// (Should be smaller then 1)
         /// </summary>
         public double circulation_intensity { get; set; }
 
@@ -169,7 +169,7 @@ public class Config {
         public int wind_range { get; set; }
 
         /// <summary>
-        /// How much humidity will wind transfer
+        /// Amount of transfered humidity by wind
         /// </summary>
         public double wind_intensity { get; set; }
 
