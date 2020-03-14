@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using Akka.Configuration;
-using AkkaConfig = Akka.Configuration.Config;
 
 /// <summary>
 /// Class used for parsing a hocon or json config file to Weltschmerz config class
@@ -45,7 +43,7 @@ public class ConfigManager {
         Config config = new Config ();
 
         //Parses valuse from hocon or json file to Akka class
-        AkkaConfig hocon = ConfigurationFactory.ParseString (File.ReadAllText (path));
+        Hocon.Config hocon = Hocon.HoconConfigurationFactory.ParseString (File.ReadAllText (path));
 
         //Map
         //Copies all map values from hocon or json file to Config class
@@ -90,16 +88,15 @@ public class ConfigManager {
     /// Finds an absolute path to a file with specified name in specified directory
     /// Returns an absolute path of the file as string
     /// </summary>
-    public static string FindFile (string fileName, string directory) {
-        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (directory);
-        FileInfo[] filesInDir = hdDirectoryInWhichToSearch.GetFiles (fileName, SearchOption.AllDirectories);
+    public static string FindFile (string fileName, string baseDirectory) {
+        DirectoryInfo directory = new DirectoryInfo (baseDirectory);
+        FileInfo[] filesInDir = directory.GetFiles (fileName, SearchOption.AllDirectories);
 
-        string fullName = "";
         foreach (FileInfo foundFile in filesInDir) {
-            fullName = foundFile.FullName;
+            return foundFile.FullName;
         }
 
-        return fullName;
+        return "";
     }
 
     /// <summary>
@@ -107,14 +104,13 @@ public class ConfigManager {
     /// Returns an absolute path of the directory as string
     /// </summary>
     public static string FindDirectory (string directoryName, string baseDirectory) {
-        DirectoryInfo hdDirectoryInWhichToSearch = new DirectoryInfo (baseDirectory);
-        FileInfo[] filesInDir = hdDirectoryInWhichToSearch.GetFiles (directoryName, SearchOption.AllDirectories);
+        DirectoryInfo directory = new DirectoryInfo (baseDirectory);
+        FileInfo[] filesInDir = directory.GetFiles (directoryName, SearchOption.AllDirectories);
 
-        string fullName = "";
         foreach (FileInfo foundFile in filesInDir) {
-            fullName = foundFile.DirectoryName;
+            return foundFile.Directory.FullName;
         }
 
-        return fullName;
+        return BASE_DIRECTORY;
     }
 }
