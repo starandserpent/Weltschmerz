@@ -96,7 +96,7 @@ public class Config {
         /// <summary>
         /// Frequency of noise
         /// </summary>
-        public float frequency { get; set; }
+        public double frequency { get; set; }
 
         /// <summary>
         /// Noise octaves
@@ -126,14 +126,14 @@ public class Config {
         /// <summary>
         /// Effect of circulation on precipitation
         /// </summary>
-        public float circulation_intensity { get; set; }
+        public double circulation_intensity { get; set; }
 
         /// <summary>
         /// Precipitation intensity in the world
         /// The lower the more deserts
         /// The higher the more jungles
         /// </summary>
-        public float precipitation_intensity { get; set; }
+        public double precipitation_intensity { get; set; }
 
         /// <summary>
         /// Default maximum precipitation
@@ -150,12 +150,12 @@ public class Config {
         /// <summary>
         /// Tranpiration determines humidity of ladmasses
         /// </summary>
-        public float transpiration { get; set; }
+        public double transpiration { get; set; }
 
         /// <summary>
         /// Evaporation determines humidity of oceans
         /// </summary>
-        public float evaporation { get; set; }
+        public double evaporation { get; set; }
     }
 
     /// <summary>
@@ -171,7 +171,7 @@ public class Config {
         /// <summary>
         /// How much humidity will wind transfer
         /// </summary>
-        public float wind_intensity { get; set; }
+        public double wind_intensity { get; set; }
 
         /// <summary>
         /// Default pressure reference 
