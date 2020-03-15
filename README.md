@@ -1,13 +1,17 @@
 # Weltschmerz
-![Example of earth generated in World map generator by Weltschmerz](https://github.com/starandserpent/World-map-generator/blob/dev/map.png)
+![Example of earth generated in World map generator by Weltschmerz](https://github.com/starandserpent/World-map-generator/blob/dev/screenshots/earthbiomes.png)
 
 ## Table of Contents
 
 * [About the Project](#about-the-project)
+* [Examples](#examples)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
+    * [Git submodule](#git-submodule)
+    * [DLL Library](#dll-library)
 * [Usage](#usage)
+* [Documentation](#documentation)
 * [License](#license)
 * [Contact](#contact)
   * [Follow us](#follow-us)
@@ -19,12 +23,15 @@ Weltschmerz is a library for simulating terrain, moisture, temperature, wind, an
 
 Weltschmerz is used in [Foreman](https://github.com/starandserpent/Foreman) to generate 3D voxel terrain and in [World map generator](https://github.com/starandserpent/World-map-generator) to generate  realistic looking maps.
 
-Foreman takes elevation from Weltschmerz and generates 3D voxel world based on this elevation
-Foreman example:
-https://www.youtube.com/watch?v=lAZFasyDf7Y
+## Examples
 
-World map generator generates biomes from environmental variables
-World map generator example:
+Foreman takes elevation from Weltschmerz and generates 3D voxel world based on this elevation.
+
+Foreman example: https://www.youtube.com/watch?v=lAZFasyDf7Y
+
+* World map generator generates biomes from environmental variables.
+
+![World map generator example](https://github.com/starandserpent/World-map-generator/blob/dev/screenshots/world.png)
 
 ## Getting Started
 
@@ -56,7 +63,7 @@ A step by step series how to install library into your project
 
 Now you have 2 options how to include Weltschmerz in your project.
 
-#### As git submodule
+#### Git submodule
 3) Go to your project folder
 4) Initialize git in your repository
 ```git
@@ -68,7 +75,7 @@ git submodule add git@github.com:starandserpent/Weltschmerz.git --recusive
 ```
 6) Include all .cs files from Weltschmerz in your project
 
-#### As .dll library
+#### DLL Library
 3) Open Weltschmerz in your IDE
 4) Build solution
 5) Open your project
