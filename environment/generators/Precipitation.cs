@@ -29,24 +29,26 @@ public class Precipitation : PrecipitationGenerator {
 
             if (weltschmerz.TemperatureGenerator.EquatorPosition < posY) {
 
-                //Caculate transfer position
-                int posx = Math.Max (posX - i, 0);
-                int posy = Math.Min (posY + i, config.map.latitude - 1);
-
-                humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);
-
-                posx = Math.Min (posX + i, config.map.longitude - 1);
-                posy = Math.Max (posY - i, 0);
-
-                humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);
-            } else {
-                //Caculate transfer position
+                //Caculate transfer position from north-east            
                 int posx = Math.Min (posX + i, config.map.longitude - 1);
                 int posy = Math.Min (posY + i, config.map.latitude - 1);
 
                 humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);
 
+                //Caculate transfer position from south-west
                 posx = Math.Max (posX - i, 0);
+                posy = Math.Max (posY - i, 0);
+
+                humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);
+            } else {
+                //Caculate transfer position from north-east
+                int posx = Math.Max (posX - i, 0);
+                int posy = Math.Min (posY + i, config.map.latitude - 1);
+
+                humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);
+
+                //Caculate transfer position from south-west
+                posx = Math.Min (posX + i, config.map.longitude - 1);
                 posy = Math.Max (posY - i, 0);
 
                 humidity += GetHumidityTrasfer (posx, posy, elevation, pressure, isLand, vector);

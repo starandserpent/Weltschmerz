@@ -6,7 +6,7 @@ public abstract class CirculationGenerator : Generator {
     public CirculationGenerator (Weltschmerz weltschmerz, Config config) : base (weltschmerz, config) { }
 
     /// <return>
-    /// Returns wind delta on specified position
+    /// Returns wind delta on specified position (can be equal to wind speed)
     /// </return>
     public abstract double GetWindDelta (int posX, int posY, double pressure, bool isLand, double newEslevation);
 
