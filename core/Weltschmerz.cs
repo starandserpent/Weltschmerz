@@ -133,4 +133,8 @@ public class Weltschmerz {
         this.PrecipitationGenerator.Update ();
         this.CirculationGenerator.Update ();
     }
+
+    public Config GetConfig(){
+        return config;
+    }
 }
