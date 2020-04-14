@@ -60,14 +60,14 @@ public class Config {
 
         /// <summary>
         /// Size of the world from south to north
-        /// Unit is one voxel or pixel (Depends on)
+        /// Unit is one voxel or pixel (depends on usage)
         /// Distance between voxels or pixels is detemined by engine
         /// </summary>
         public int latitude { get; set; }
 
         /// <summary>
         /// Size of the world from east to west
-        /// Unit is one voxel or pixel (Depends on usage)
+        /// Unit is one voxel or pixel (depends on usage)
         /// Distance between voxels or pixels is detemined by engine
         /// </summary>
         public int longitude { get; set; }
@@ -148,12 +148,12 @@ public class Config {
     /// </summary>
     public class Humidity {
         /// <summary>
-        /// Tranpiration determines humidity of ladmasses
+        /// Tranpiration determines humidity around landmasses
         /// </summary>
         public double transpiration { get; set; }
 
         /// <summary>
-        /// Evaporation determines humidity of oceans
+        /// Evaporation determines humidity around oceans
         /// </summary>
         public double evaporation { get; set; }
     }
@@ -164,12 +164,15 @@ public class Config {
     public class Circulation {
 
         /// <summary>
-        /// How many units transfer humidity by wind to current location 
+        /// Amout of units(pixels) on map which will wind travel
+        /// The higher map the more units have to wind travel
+        /// High range has negative effect on performance
         /// </summary>
         public int wind_range { get; set; }
 
         /// <summary>
-        /// Amount of transfered humidity by wind
+        /// Scale of transfered humidity by wind
+        /// The higher intensity the more humidity will be transfered
         /// </summary>
         public double wind_intensity { get; set; }
 
