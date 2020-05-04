@@ -38,7 +38,7 @@ public class Elevation : ElevationGenerator {
         double n2 = noise.GetPerlinFractal ((float) nz, (float) nw);
 
         //Placing values from two circles into 2D
-        return Math.Min (Math.Max ((noise.GetPerlinFractal ((float) n1, (float) n2) * config.elevation.max_elevation ) + config.elevation.min_elevation, config.elevation.min_elevation), config.elevation.max_elevation);
+        return Math.Min (Math.Max ((Math.Abs(noise.GetPerlinFractal ((float) n1, (float) n2)) * config.elevation.max_elevation ) + config.elevation.min_elevation, config.elevation.min_elevation), config.elevation.max_elevation);
     }
 
     public override bool IsLand(double elevation){
