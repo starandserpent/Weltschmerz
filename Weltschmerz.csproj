@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="src/**/*.cs;tests/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hocon.Configuration">
       <Version>2.0.3</Version>
     </PackageReference>

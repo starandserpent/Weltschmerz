@@ -23,6 +23,38 @@ Weltschmerz is a library for simulating terrain, moisture, temperature, wind, an
 
 Weltschmerz is used in [Foreman](https://github.com/starandserpent/Foreman) to generate 3D voxel terrain and in [World map generator](https://github.com/starandserpent/World-map-generator) to generate  realistic looking maps.
 
+## Modern environmental-atlas API
+
+`src/Weltschmerz.Spatial` is a separate immutable `.NET 10` library for generating a complete terrain-informed environmental atlas. Its main operation accepts an `EnvironmentalAtlasDefinition` and the consumer's complete row-major elevation raster. Weltschmerz does not generate replacement terrain, call Goxlap, read terrain files, or search runtime configuration. The project does not depend on the historical HOCON or FastNoise packages.
+
+The fixed `EnvironmentalAtlasProfile.TemperateAtlasV1` profile includes long-term temperature normals in Celsius, atmospheric pressure in Pascals, circulation X/Z, humidity and surface moisture in normalized 0–1 units, annual precipitation in millimetres/year, supplied terrain elevation in metres, and a stable biome ID. Its deterministic seeded integer-hash value noise and fixed west-to-east moisture-transport pass use the complete supplied topography. Oceans contribute moisture and rising terrain affects precipitation; this is a bounded, reproducible approximation, not a scientifically exact atmospheric simulation or changing weather system.
+
+The initial land-biome identities are `TemperateForest` (1) and `Meadow` (2). Forest classification uses the profile's temperature interval and annual precipitation threshold. Environmental data is generated as one complete operation and exposed read-only; the generator does not retain mutable configuration or lazily generate missing cells. Dark Lantern uses this API during new-world creation, then persists and verifies the resulting atlas. Gameplay population reads retained biome identities and does not call this generator. Its separate `DarkLantern.Game/World/Climate` system continues to own dynamic seasons and weather.
+
+The historical finite-map generator remains available to its existing consumers. Its mutable configuration and noise dependencies are independent of the modern spatial-atlas project.
+
+### Generating an atlas
+
+Reference `src/Weltschmerz.Spatial/Weltschmerz.Spatial.csproj` from the world-creation project and pass the complete row-major elevation raster sampled by your terrain provider. The index is `z * width + x`; each value is the terrain elevation in metres at that geographical cell's center. Weltschmerz returns one complete immutable atlas and does not load terrain or generate missing cells.
+
+```csharp
+using Weltschmerz.Spatial.Atlas;
+
+var bounds = new EnvironmentalAtlasBounds(-65_536, -65_536, 256, 256, 512);
+var definition = new EnvironmentalAtlasDefinition(
+    worldSeed,
+    worldGenerationVersion,
+    terrainProviderIdentity,
+    terrainProfileIdentity,
+    EnvironmentalAtlasProfile.TemperateAtlasV1,
+    bounds,
+    oceanElevationMetres);
+var atlas = new EnvironmentalAtlasGenerator().Generate(definition, terrainElevations);
+var biome = atlas.GetCell(x, z).BiomeId;
+```
+
+`terrainElevations` must contain exactly `width * height` finite values. Atlas coordinates are horizontal X/Z; the consumer supplies its authoritative terrain elevation rather than asking Weltschmerz to invent replacement geometry.
+
 ## Examples
 
 Foreman takes elevation from Weltschmerz and generates 3D voxel world based on this elevation.
@@ -35,19 +67,17 @@ Foreman example: https://www.youtube.com/watch?v=lAZFasyDf7Y
 
 ## Getting Started
 
-These instructions will get you a copy of the library for development. See build for notes on how to build the dll library for your project.
+The modern atlas API targets .NET 10 and has no HOCON, FastNoise, or runtime configuration-file dependency. The historical setup instructions below apply only to consumers of the finite-map API.
 
-### Prerequisites
+### Modern API prerequisites
 
-Make sure you have installed all of the following prerequisites on your development machine:
+Use the .NET 10 SDK and reference `src/Weltschmerz.Spatial/Weltschmerz.Spatial.csproj` from the project that performs offline atlas generation.
 
-* *.NET environment*
+### Historical API prerequisites
 
-* [Git](https://git-scm.com/downloads) - OSX and Linux machines typically have this already installed.
+The legacy `Weltschmerz.csproj` uses its historical HOCON configuration and FastNoise dependency. Its old configuration-file and installation guidance below is retained for those consumers only; neither is required by `Weltschmerz.Spatial`.
 
-* [Config file](https://github.com/starandserpent/Weltschmerz/blob/master/config/config.conf) in your project folder
-
-### Installation
+#### Legacy installation
 A step by step series how to install library into your project
 1) Select or make your .NET project
 
@@ -82,7 +112,7 @@ git submodule add git@github.com:starandserpent/Weltschmerz.git --recusive
 6) Add Weltschmerz library as reference into your project
 
 
-## Usage
+#### Legacy API usage
 You can access all environmental variables from *Weltschmerz* class
 ```csharp
     Weltschmerz weltschmerz = new Weltschmerz();
