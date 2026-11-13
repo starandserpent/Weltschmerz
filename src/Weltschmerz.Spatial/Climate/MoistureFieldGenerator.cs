@@ -1,4 +1,5 @@
 using Weltschmerz.Spatial.Atlas;
+using System.Threading;
 
 namespace Weltschmerz.Spatial.Climate;
 
@@ -7,7 +8,8 @@ internal static class MoistureFieldGenerator {
         EnvironmentalAtlasDefinition definition,
         ReadOnlySpan<double> elevations,
         ReadOnlySpan<double> circulationX,
-        ReadOnlySpan<double> circulationZ) {
+        ReadOnlySpan<double> circulationZ,
+        CancellationToken cancellationToken) {
         var count = elevations.Length;
         var humidity = new double[count];
         var surfaceMoisture = new double[count];
@@ -18,6 +20,7 @@ internal static class MoistureFieldGenerator {
 
         // The fixed west-to-east traversal is the only transport pass. No data is read beyond atlas bounds.
         for (var x = 0; x < width; x++) for (var z = 0; z < height; z++) {
+            if ((z & 0x3f) == 0) cancellationToken.ThrowIfCancellationRequested();
             var index = checked(z * width + x);
             var (worldX, worldZ) = definition.Bounds.CellCenter(x, z);
             var previousHumidity = profile.WesternBoundaryHumidity;

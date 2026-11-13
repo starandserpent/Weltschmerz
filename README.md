@@ -49,7 +49,7 @@ var definition = new EnvironmentalAtlasDefinition(
     EnvironmentalAtlasProfile.TemperateAtlasV1,
     bounds,
     oceanElevationMetres);
-var atlas = new EnvironmentalAtlasGenerator().Generate(definition, terrainElevations);
+var atlas = new EnvironmentalAtlasGenerator().Generate(definition, terrainElevations, cancellationToken);
 var biome = atlas.GetCell(x, z).BiomeId;
 ```
 

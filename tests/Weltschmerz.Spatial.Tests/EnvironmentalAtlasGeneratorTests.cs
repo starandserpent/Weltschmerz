@@ -12,8 +12,8 @@ public sealed class EnvironmentalAtlasGeneratorTests {
             .Select(index => index % 17 == 0 ? 640d : -0.5d).ToArray();
         var generator = new EnvironmentalAtlasGenerator();
 
-        var first = generator.Generate(definition, elevations);
-        var second = generator.Generate(definition, elevations);
+        var first = generator.Generate(definition, elevations, TestContext.Current.CancellationToken);
+        var second = generator.Generate(definition, elevations, TestContext.Current.CancellationToken);
 
         Assert.Equal(definition.ExpectedCellCount, first.Cells.Length);
         Assert.Equal(first.Cells.ToArray(), second.Cells.ToArray());
@@ -34,8 +34,8 @@ public sealed class EnvironmentalAtlasGeneratorTests {
         for (var z = 0; z < definition.Bounds.Height; z++) mountain[z * definition.Bounds.Width + 8] = 1_000d;
         var generator = new EnvironmentalAtlasGenerator();
 
-        var baseline = generator.Generate(definition, flat);
-        var raised = generator.Generate(definition, mountain);
+        var baseline = generator.Generate(definition, flat, TestContext.Current.CancellationToken);
+        var raised = generator.Generate(definition, mountain, TestContext.Current.CancellationToken);
 
         Assert.True(raised.GetCell(8, 4).TemperatureCelsius < baseline.GetCell(8, 4).TemperatureCelsius);
         Assert.True(raised.GetCell(8, 4).AtmosphericPressurePascals <
@@ -52,8 +52,8 @@ public sealed class EnvironmentalAtlasGeneratorTests {
         var land = Enumerable.Repeat(5d, definition.ExpectedCellCount).ToArray();
         var generator = new EnvironmentalAtlasGenerator();
 
-        var oceanAtlas = generator.Generate(definition, ocean);
-        var landAtlas = generator.Generate(definition, land);
+        var oceanAtlas = generator.Generate(definition, ocean, TestContext.Current.CancellationToken);
+        var landAtlas = generator.Generate(definition, land, TestContext.Current.CancellationToken);
 
         Assert.True(oceanAtlas.GetCell(4, 4).Humidity > landAtlas.GetCell(4, 4).Humidity);
         Assert.True(oceanAtlas.GetCell(4, 4).AnnualPrecipitationMillimetres >
@@ -76,13 +76,15 @@ public sealed class EnvironmentalAtlasGeneratorTests {
         var elevations = new double[firstDefinition.ExpectedCellCount];
         var generator = new EnvironmentalAtlasGenerator();
 
-        var first = generator.Generate(firstDefinition, elevations);
-        var second = generator.Generate(secondDefinition, elevations);
+        var first = generator.Generate(firstDefinition, elevations, TestContext.Current.CancellationToken);
+        var second = generator.Generate(secondDefinition, elevations, TestContext.Current.CancellationToken);
 
         Assert.NotEqual(first.Cells.ToArray(), second.Cells.ToArray());
-        Assert.Throws<ArgumentException>(() => generator.Generate(firstDefinition, new double[1]));
+        Assert.Throws<ArgumentException>(() => generator.Generate(
+            firstDefinition, new double[1], TestContext.Current.CancellationToken));
         elevations[7] = double.NaN;
-        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(firstDefinition, elevations));
+        Assert.Throws<ArgumentOutOfRangeException>(() => generator.Generate(
+            firstDefinition, elevations, TestContext.Current.CancellationToken));
         Assert.Throws<ArgumentOutOfRangeException>(() => new EnvironmentalAtlasBounds(0, 0, 2, 2, 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => new EnvironmentalAtlasDefinition(
             1, 1, "goxlap", "profile", EnvironmentalAtlasProfile.TemperateAtlasV1,
@@ -93,7 +95,8 @@ public sealed class EnvironmentalAtlasGeneratorTests {
     public void Climate_generation_does_not_retain_or_mutate_the_supplied_raster() {
         var definition = Definition(seed: 87, width: 7, height: 5);
         var elevations = Enumerable.Repeat(12d, definition.ExpectedCellCount).ToArray();
-        var atlas = new EnvironmentalAtlasGenerator().Generate(definition, elevations);
+        var atlas = new EnvironmentalAtlasGenerator().Generate(
+            definition, elevations, TestContext.Current.CancellationToken);
         var retained = atlas.GetCell(2, 3).TerrainElevationMetres;
 
         elevations[3 * definition.Bounds.Width + 2] = -100d;

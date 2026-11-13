@@ -1,4 +1,5 @@
 using Weltschmerz.Spatial.Atlas;
+using System.Threading;
 
 namespace Weltschmerz.Spatial.Climate;
 
@@ -9,12 +10,14 @@ internal static class CirculationFieldGenerator {
     internal static (double[] Pressure, double[] X, double[] Z) Generate(
         EnvironmentalAtlasDefinition definition,
         ReadOnlySpan<double> elevations,
-        ReadOnlySpan<double> temperatures) {
+        ReadOnlySpan<double> temperatures,
+        CancellationToken cancellationToken) {
         var pressure = new double[elevations.Length];
         var xField = new double[elevations.Length];
         var zField = new double[elevations.Length];
         var profile = definition.Profile;
         for (var z = 0; z < definition.Bounds.Height; z++) for (var x = 0; x < definition.Bounds.Width; x++) {
+            if ((x & 0x3f) == 0) cancellationToken.ThrowIfCancellationRequested();
             var index = checked(z * definition.Bounds.Width + x);
             var (worldX, worldZ) = definition.Bounds.CellCenter(x, z);
             // Hydrostatic pressure is bounded at the low end to keep extreme supplied elevations finite.
